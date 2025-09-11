@@ -25,8 +25,4 @@
     <ProjectReference Include="..\Auction_System_Library\Auction_System_Library.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>
