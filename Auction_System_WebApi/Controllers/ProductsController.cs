@@ -35,7 +35,7 @@ namespace Auction_System_WebApi.Controllers
 
         // PUT: api/Products/id
         [HttpPut("{id}")]
-        public async Task<ActionResult<Product>> PutProduct([FromQuery]int id, [FromQuery]ProductDTO product)
+        public async Task<ActionResult<Product>> PutProduct(int id, [FromQuery]ProductDTO product)
         {
             var pro = new Product()
             {
