@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Auction_System_Library.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Auction_System_Library.Data;
-using Auction_System_Library.Models;
+using Auction_System_Library_Database.Data;
+using Auction_System_Library_Database.Models;
 using Auction_System_Library.Interfaces;
 
 namespace Auction_System_WebApi.Controllers

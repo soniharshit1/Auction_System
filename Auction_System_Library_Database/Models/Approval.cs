@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Auction_System_Library.Models;
+namespace Auction_System_Library_Database.Models;
 
 public partial class Approval
 {
@@ -16,6 +16,8 @@ public partial class Approval
     public string? Remarks { get; set; }
 
     public int AgentId { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual Person Agent { get; set; } = null!;
 
