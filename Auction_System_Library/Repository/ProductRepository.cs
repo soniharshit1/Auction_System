@@ -14,12 +14,15 @@ namespace Auction_System_Library.Repository
         }
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+                .Where(p => _context.Categories
+                    .Any(c => c.CategoryId == p.CategoryId && c.IsActive == true))
+                .ToListAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int id)
         {
-            return await FindProductWithId(id);
+           return await FindProductWithId(id);
         }
 
         public async Task<Product?> UpdateProductAsync(int id, Product updatedProduct)
@@ -37,7 +40,7 @@ namespace Auction_System_Library.Repository
             }
             return null;
         }
-
+        // TODO: put a check if category exists
         public async Task<string> AddProductAsync(Product product)
         {
             _context.Products.Add(product);
@@ -59,7 +62,11 @@ namespace Auction_System_Library.Repository
 
         private async Task<Product?> FindProductWithId(int id)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+            return await _context.Products
+                .Where(p => p.ProductId == id)
+                .Where(p => _context.Categories
+                    .Any(c => c.CategoryId == p.CategoryId && c.IsActive == true))
+                .FirstOrDefaultAsync();
         }
     }
 }

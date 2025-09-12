@@ -17,6 +17,7 @@ namespace Auction_System_WebApi.Controllers
     public class ProductsController(IProductRepository productRepository) : ControllerBase
     {
         private readonly IProductRepository _productRepository = productRepository;
+
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
