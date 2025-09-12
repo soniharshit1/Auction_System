@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Auction_System_Library.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Auction_System_Library.Data;
 using Auction_System_Library.Models;
@@ -16,6 +17,7 @@ namespace Auction_System_WebApi.Controllers
     public class ProductsController(IProductRepository productRepository) : ControllerBase
     {
         private readonly IProductRepository _productRepository = productRepository;
+
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
@@ -34,14 +36,16 @@ namespace Auction_System_WebApi.Controllers
 
         // PUT: api/Products/id
         [HttpPut("{id}")]
-        public async Task<ActionResult<Product>> PutProduct(int id, Product product)
+        public async Task<ActionResult<Product>> PutProduct(int id, [FromQuery]ProductDTO product)
         {
-            if (id != product.ProductId)
+            var pro = new Product()
             {
-                return BadRequest("Product id mismatch!");
-            }
+                ProductId = id,
+                ProductName = product.ProductName,
+                CategoryId = product.CategoryId
+            };
 
-            Product? updatedProduct = await _productRepository.UpdateProductAsync(id, product);
+            Product? updatedProduct = await _productRepository.UpdateProductAsync(id, pro);
             if(updatedProduct == null)
             {
                 return NotFound("Product not found");
@@ -51,9 +55,14 @@ namespace Auction_System_WebApi.Controllers
 
         // POST: api/Products
         [HttpPost]
-        public async Task<IActionResult> PostProduct(Product product)
+        public async Task<IActionResult> PostProduct([FromQuery] ProductDTO product)
         {
-            string response = await _productRepository.AddProductAsync(product);
+            var pro = new Product()
+            {
+                ProductName = product.ProductName,
+                CategoryId = product.CategoryId
+            };
+            string response = await _productRepository.AddProductAsync(pro);
             return Ok(response);
         }
 
@@ -65,7 +74,7 @@ namespace Auction_System_WebApi.Controllers
 
             if(response == "Product not found")
             {
-                return NotFound("Product not found");
+                return NotFound(response);
             }
             return Ok(response);
         }
