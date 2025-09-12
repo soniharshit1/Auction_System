@@ -11,7 +11,7 @@ namespace Auction_System_Library.Interfaces
     {
         Task<IEnumerable<Auction>> GetAllAuctionsAsync();
         Task<IEnumerable<Auction>> GetActiveAuctionsAsync();
-        Task<Auction> GetAuctionByIdAsync(int id);
+        Task<Auction?> GetAuctionByIdAsync(int id);
         Task<string> CreateAuctionsAsync(Auction auction);
         Task<string> UpdateAuctionAsync(int id, Auction updatedAuction);
         Task<string> DeleteAuctionAsync(int id);
