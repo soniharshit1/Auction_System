@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Auction_System_Library.Models;
+using Auction_System_Library_Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Auction_System_Library.Data;
+namespace Auction_System_Library_Database.Data;
 
 public partial class AuctionDbContext : DbContext
 {
@@ -47,6 +47,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.ApprovalDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.Remarks).HasMaxLength(250);
             entity.Property(e => e.Status).HasDefaultValue(false);
@@ -69,6 +70,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.FinalBid).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.SellerId).HasColumnName("SellerID");
             entity.Property(e => e.StartDate).HasColumnType("datetime");
@@ -95,6 +97,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.AttributeName).HasMaxLength(100);
             entity.Property(e => e.AttributeValue).HasMaxLength(100);
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.Attribute).WithMany(p => p.AuctionProductAttributes)
                 .HasForeignKey(d => d.AttributeId)
@@ -113,6 +116,7 @@ public partial class AuctionDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.SellerId).HasColumnName("SellerID");
 
@@ -143,6 +147,7 @@ public partial class AuctionDbContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.BuyerId).HasColumnName("BuyerID");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.Auction).WithMany(p => p.Bids)
                 .HasForeignKey(d => d.AuctionId)
@@ -172,6 +177,7 @@ public partial class AuctionDbContext : DbContext
 
             entity.Property(e => e.AttributeId).HasColumnName("AttributeID");
             entity.Property(e => e.AttributeName).HasMaxLength(100);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
             entity.HasOne(d => d.Product).WithMany(p => p.GeneralProductAttributes)
@@ -191,6 +197,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.ContactNumber).HasMaxLength(20);
             entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.Role).HasMaxLength(50);
@@ -202,6 +209,7 @@ public partial class AuctionDbContext : DbContext
 
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductName).HasMaxLength(200);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
@@ -219,6 +227,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.Date)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.TargetUserId).HasColumnName("TargetUserID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -243,6 +252,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
             entity.Property(e => e.BuyerId).HasColumnName("BuyerID");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.PaymentDate).HasColumnType("datetime");
             entity.Property(e => e.PaymentStatus).HasDefaultValue(false);
             entity.Property(e => e.SellerId).HasColumnName("SellerID");

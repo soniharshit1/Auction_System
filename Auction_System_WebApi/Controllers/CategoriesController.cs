@@ -1,6 +1,6 @@
-﻿using Auction_System_Library.Data;
+﻿using Auction_System_Library_Database.Data;
 using Auction_System_Library.Interfaces;
-using Auction_System_Library.Models;
+using Auction_System_Library_Database.Models;
 using Auction_System_Library.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

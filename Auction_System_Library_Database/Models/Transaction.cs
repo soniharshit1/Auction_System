@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Auction_System_Library.Models;
+namespace Auction_System_Library_Database.Models;
 
 public partial class Transaction
 {
@@ -18,6 +18,8 @@ public partial class Transaction
     public DateTime? PaymentDate { get; set; }
 
     public int SellerId { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual Auction Auction { get; set; } = null!;
 

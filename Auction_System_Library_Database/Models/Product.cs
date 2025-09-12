@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Auction_System_Library.Models;
+namespace Auction_System_Library_Database.Models;
 
 public partial class Product
 {
@@ -10,6 +10,8 @@ public partial class Product
     public string ProductName { get; set; } = null!;
 
     public int CategoryId { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 
