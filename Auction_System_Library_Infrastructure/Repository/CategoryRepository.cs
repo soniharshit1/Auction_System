@@ -1,5 +1,5 @@
 ﻿using Auction_System_Library_Database.Data;
-using Auction_System_Library.Interfaces;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auction_System_Library.Repository
+namespace Auction_System_Library_Infrastructure.Repository
 {
     public class CategoryRepository : ICategoryRepository
     {

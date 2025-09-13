@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Auction_System_Library_Database.Models;
 
-namespace Auction_System_Library.Interfaces
+namespace Auction_System_Library_Infrastructure.Interfaces
 {
     public interface ICategoryRepository
     {
