@@ -1,10 +1,10 @@
 ﻿using Auction_System_Library_Database.Data;
-using Auction_System_Library.Interfaces;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Database.Models;
-using Auction_System_Library.Repository;
+using Auction_System_Library_Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Auction_System_Library.DTOs;
+using Auction_System_Library_Infrastructure.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

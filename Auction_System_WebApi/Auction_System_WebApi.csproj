@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Auction_System_Library\Auction_System_Library_Infrastucture.csproj" />
     <ProjectReference Include="..\Auction_System_Library_Database\Auction_System_Library_Database.csproj" />
+    <ProjectReference Include="..\Auction_System_Library_Infrastructure\Auction_System_Library_Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
