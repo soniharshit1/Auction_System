@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Auction_System_Library_Database.Enums;
 
 namespace Auction_System_Library_Infrastructure.Repository
 {
@@ -37,14 +38,14 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Category not found";
         }
 
-        public async Task<IEnumerable<Category>> GetActiveCategoriesAsync()
+        public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
             return await _context.Categories
                 .Where(c => c.IsActive == true)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<Category>> GetCategoriesAsync(Role role)
         {
             return await _context.Categories.ToListAsync();
         }
