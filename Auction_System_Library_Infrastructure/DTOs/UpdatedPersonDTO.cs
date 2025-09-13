@@ -13,6 +13,5 @@ namespace Auction_System_Library_Infrastructure.DTOs
         public string Email { get; set; } = null!;
 
         public string? ContactNumber { get; set; }
-
     }
 }
