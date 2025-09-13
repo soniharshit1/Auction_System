@@ -1,9 +1,5 @@
-﻿using Auction_System_Library.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Auction_System_Library_Database.Models;
+using Auction_System_Library_Infrastructure.DTOs;
 
 namespace Auction_System_Library.Interfaces
 {
