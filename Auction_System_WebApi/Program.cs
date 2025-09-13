@@ -1,6 +1,8 @@
-using Auction_System_Library.Data;
-using Auction_System_Library.Interfaces;
-using Auction_System_Library.Repository;
+using Auction_System_Library_Database.Data;
+using Auction_System_Library_Infrastructure.Interface;
+using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Infrastructure.Repository;
+using Auction_System_Library_Infrastucture.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<AuctionDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
+builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
 
 var app = builder.Build();
 

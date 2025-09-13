@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Auction_System_Library.Models;
+namespace Auction_System_Library_Database.Models;
 
 public partial class Person
 {
@@ -16,6 +16,8 @@ public partial class Person
     public string Role { get; set; } = null!;
 
     public string? ContactNumber { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 

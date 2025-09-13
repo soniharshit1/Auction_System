@@ -1,9 +1,9 @@
-﻿using Auction_System_Library.Interfaces;
-using Auction_System_Library.Models;
-using Auction_System_Library.Data;
+﻿using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Database.Models;
+using Auction_System_Library_Database.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Auction_System_Library.Repository
+namespace Auction_System_Library_Infrastructure.Repository
 {
     public class ProductRepository : IProductRepository
     {

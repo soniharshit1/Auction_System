@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Auction_System_Library.Models;
+namespace Auction_System_Library_Database.Models;
 
 public partial class Bid
 {
@@ -14,6 +14,8 @@ public partial class Bid
     public decimal Amount { get; set; }
 
     public DateTime? BidTime { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual Auction Auction { get; set; } = null!;
 

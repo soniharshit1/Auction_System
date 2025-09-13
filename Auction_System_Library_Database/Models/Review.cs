@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Auction_System_Library.Models;
+namespace Auction_System_Library_Database.Models;
 
 public partial class Review
 {
@@ -16,6 +16,8 @@ public partial class Review
     public string? Comment { get; set; }
 
     public DateTime? Date { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual Person TargetUser { get; set; } = null!;
 

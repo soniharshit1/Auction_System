@@ -1,14 +1,15 @@
-﻿using Auction_System_Library.Data;
-using Auction_System_Library.Interfaces;
-using Auction_System_Library.Models;
+﻿using Auction_System_Library_Database.Data;
+using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Auction_System_Library_Infrastructure.Interface;
 
-namespace Auction_System_Library.Repository
+namespace Auction_System_Library_Infrastucture.Repository
 {
     public class AuctionRepository : IAuctionRepository
 
@@ -107,14 +108,5 @@ namespace Auction_System_Library.Repository
             }
             return "Auction not found.";
         }
-
-
-
-
-
-
-
-
-
     }
 }
