@@ -22,7 +22,7 @@ builder.Services.AddDbContext<AuctionDbContext>(options =>
 builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
 builder.Services.AddScoped<IPersonRepository,PersonRepository>();
-
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

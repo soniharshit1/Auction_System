@@ -11,9 +11,9 @@ namespace Auction_System_Library_Infrastructure.Interfaces
     public interface IReviewRepository
     {
         Task<IEnumerable<Review>> GetAllReviewsAsync();
-        Task<Review> GetReviewByIdAsync(int id);
-        Task AddReviewAsync(CreateReviewDTO dto);
-        Task UpdateReviewAsync(int id, UpdateReviewDTO dto);
-        Task DeleteReviewAsync(int id);
+        Task<IEnumerable<Review?>> GetByUserAndTargetAsync(int userId, int targetUserId);
+        Task <Review?>AddReviewAsync(CreateReviewDTO dto);
+        Task <Review?> UpdateReviewAsync(int id, UpdateReviewDTO dto);
+        Task <string?>DeleteReviewAsync(int id);
     }
 }
