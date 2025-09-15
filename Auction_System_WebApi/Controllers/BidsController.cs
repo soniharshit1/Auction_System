@@ -1,108 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Auction_System_Library_Database.Data;
+using Auction_System_Library_Database.Models;
+using Auction_System_Library_Infrastucture.DTOs;
+using Auction_System_Library_Infrastucture.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Auction_System_Library_Database.Data;
-using Auction_System_Library_Database.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Auction_System_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BidsController : ControllerBase
+    public class BidsController(IBidRepository bidRepository) : ControllerBase
     {
-        private readonly AuctionDbContext _context;
+        private readonly IBidRepository _bidRepository = bidRepository;
 
-        public BidsController(AuctionDbContext context)
-        {
-            _context = context;
-        }
-
-        // GET: api/Bids
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bid>>> GetBids()
-        {
-            return await _context.Bids.ToListAsync();
-        }
-
-        // GET: api/Bids/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Bid>> GetBid(int id)
-        {
-            var bid = await _context.Bids.FindAsync(id);
-
-            if (bid == null)
-            {
-                return NotFound();
-            }
-
-            return bid;
-        }
-
-        // PUT: api/Bids/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBid(int id, Bid bid)
-        {
-            if (id != bid.BidId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(bid).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BidExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Bids
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Bid>> PostBid(Bid bid)
+        public async Task<IActionResult> PlaceBid([FromBody] BidCreateDTO bidDto)
         {
-            _context.Bids.Add(bid);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBid", new { id = bid.BidId }, bid);
-        }
-
-        // DELETE: api/Bids/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBid(int id)
-        {
-            var bid = await _context.Bids.FindAsync(id);
-            if (bid == null)
+            var bid = new Bid
             {
-                return NotFound();
-            }
+                AuctionId = bidDto.AuctionId,
+                BuyerId = bidDto.BuyerId,
+                Amount = bidDto.Amount,
+                BidTime = DateTime.Now
+            };
 
-            _context.Bids.Remove(bid);
-            await _context.SaveChangesAsync();
+            var response = await _bidRepository.PlaceBidAsync(bid);
+            if (response.Contains("Bid must be"))
+                return BadRequest(response);
 
-            return NoContent();
+            return Ok(response);
         }
 
-        private bool BidExists(int id)
+        [HttpGet("Auction/{auctionId}")]
+        public async Task<ActionResult<IEnumerable<Bid>>> GetBidsByAuction(int auctionId)
         {
-            return _context.Bids.Any(e => e.BidId == id);
+            var bids = await _bidRepository.GetBidsByAuctionAsync(auctionId);
+            return Ok(bids);
+        }
+
+        [HttpGet("Buyer/{buyerId}")]
+        public async Task<ActionResult<IEnumerable<Bid>>> GetBidsByBuyer(int buyerId)
+        {
+            var bids = await _bidRepository.GetBidsByBuyerAsync(buyerId);
+            return Ok(bids);
+        }
+
+        [HttpGet("Highest/{auctionId}")]
+        public async Task<ActionResult<Bid>> GetHighestBid(int auctionId)
+        {
+            var bid = await _bidRepository.GetHighestBidAsync(auctionId);
+            if (bid == null)
+                return NotFound("No bids found for this auction.");
+
+            return Ok(bid);
+        }
+
+        [HttpGet("{bidId}")]
+        public async Task<ActionResult<Bid>> GetBidById(int bidId)
+        {
+            var bid = await _bidRepository.GetBidByIdAsync(bidId);
+            if (bid == null)
+                return NotFound("Bid not found.");
+
+            return Ok(bid);
+        }
+
+        [HttpDelete("{bidId}")]
+        public async Task<IActionResult> DeleteBid(int bidId)
+        {
+            var response = await _bidRepository.DeleteBidAsync(bidId);
+            if (response == "Bid not found.")
+                return NotFound(response);
+
+            return Ok(response);
         }
     }
 }
+

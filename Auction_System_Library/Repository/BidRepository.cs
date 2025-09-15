@@ -27,6 +27,13 @@ namespace Auction_System_Library_Infrastructure.Repository
                 return "Auction not found.";
             }
 
+
+            if (auction.SellerId == bid.BuyerId)
+            {
+                return "Sellers cannot place bids on their own auctions.";
+            }
+
+
             var highestBid = await _context.Bids
                 .Where(b => b.AuctionId == bid.AuctionId)
                 .OrderByDescending(b => b.Amount)
