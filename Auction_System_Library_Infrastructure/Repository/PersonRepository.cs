@@ -132,10 +132,5 @@ namespace Auction_System_Library_Infrastructure.Repository
             await _context.SaveChangesAsync();
             return person;
         }
-
-        public Task<Person?> UpdatePersonDetailsAsync(int id, UpdatedPersonDTO person)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
