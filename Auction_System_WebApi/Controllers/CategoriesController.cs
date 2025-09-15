@@ -1,24 +1,9 @@
-<<<<<<< HEAD
-﻿using Auction_System_Library_Database.Data;
-using Auction_System_Library_Infrastructure.Interfaces;
-using Auction_System_Library_Database.Models;
-using Auction_System_Library_Infrastructure.Repository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Auction_System_Library_Infrastructure.DTOs;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
-=======
 ﻿using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Database.Enums;
 using Auction_System_Library_Database.Models;
 using Microsoft.AspNetCore.Mvc;
 using Auction_System_Library_Infrastructure.DTOs;
->>>>>>> origin/master
+
 
 namespace Auction_System_WebApi.Controllers
 {
