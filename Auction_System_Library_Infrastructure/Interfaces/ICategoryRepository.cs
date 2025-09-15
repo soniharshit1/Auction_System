@@ -10,7 +10,6 @@ namespace Auction_System_Library_Infrastructure.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetCategoriesAsync();
         Task<string> UpdateCategoryAsync(int id, Category updatedCategory);
         Task<string> AddCategoryAsync(Category category);
         Task<string> DeleteCategoryAsync(int id);

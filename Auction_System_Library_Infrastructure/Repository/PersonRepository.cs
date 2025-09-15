@@ -132,6 +132,5 @@ namespace Auction_System_Library_Infrastructure.Repository
             await _context.SaveChangesAsync();
             return person;
         }
-
     }
 }
