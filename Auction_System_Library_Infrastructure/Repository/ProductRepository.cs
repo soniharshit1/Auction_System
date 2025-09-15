@@ -15,6 +15,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             return await _context.Products
+                .Where(p => p.IsDeleted == false)
                 .Where(p => _context.Categories
                     .Any(c => c.CategoryId == p.CategoryId && c.IsActive == true))
                 .ToListAsync();
@@ -64,6 +65,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         {
             return await _context.Products
                 .Where(p => p.ProductId == id)
+                .Where(p=>p.IsDeleted == false)
                 .Where(p => _context.Categories
                     .Any(c => c.CategoryId == p.CategoryId && c.IsActive == true))
                 .FirstOrDefaultAsync();

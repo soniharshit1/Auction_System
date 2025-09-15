@@ -1,4 +1,4 @@
-﻿using Auction_System_Library_Database.Models;
+using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 
 namespace Auction_System_Library.Interfaces
