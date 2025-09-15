@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Auction_System_Library_Infrastructure.DTOs
 {
-    public class updatedPersonDTO
+    public class UpdatedPersonDTO
     {
         public string Name { get; set; } = null!;
 

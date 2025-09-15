@@ -117,7 +117,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
 
         //can only update email and contact number
-        public async Task<Person?> UpdatePersonDetailsAsync(int id, updatedPersonDTO dto)
+        public async Task<Person?> UpdatePersonDetailsAsync(int id, UpdatedPersonDTO dto)
         {
             var person = await _context.People.FindAsync(id);
             if (person is null)
