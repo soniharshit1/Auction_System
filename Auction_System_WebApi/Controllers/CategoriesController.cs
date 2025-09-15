@@ -12,15 +12,7 @@ namespace Auction_System_WebApi.Controllers
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
-        // GET: api/Categories/User
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
-        {
-            var activeCategoryList = await _categoryRepository.GetCategoriesAsync();
-            return Ok(activeCategoryList);
-        }
-
-        // GET: api/Categories/Admin
+        // GET: api/Categories/Role
         [HttpGet("{Role}")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories(Role role)
         {

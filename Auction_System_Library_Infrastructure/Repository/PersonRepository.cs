@@ -133,5 +133,9 @@ namespace Auction_System_Library_Infrastructure.Repository
             return person;
         }
 
+        public Task<Person?> UpdatePersonDetailsAsync(int id, UpdatedPersonDTO person)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
