@@ -11,10 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Auction_System_WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController(IPersonRepository personRepository) : ControllerBase
@@ -40,6 +41,7 @@ namespace Auction_System_WebApi.Controllers
         //// PUT: api/People/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "User,Agent")]
         public async Task<IActionResult> UpdatePersonDetailsAsync(int id, [FromBody] updatedPersonDTO dto)
         {
             if (dto == null)
@@ -69,6 +71,7 @@ namespace Auction_System_WebApi.Controllers
         // POST: api/People
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Person>> PostPerson([FromBody]PersonDTO dto)
         {
             return Ok(await _personRepository.RegisterPersonAsync(dto));
