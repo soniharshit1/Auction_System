@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using Auction_System_Library_Database.Data;
 using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Database.Models;
@@ -11,6 +12,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
+=======
+﻿using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Database.Enums;
+using Auction_System_Library_Database.Models;
+using Microsoft.AspNetCore.Mvc;
+using Auction_System_Library_Infrastructure.DTOs;
+>>>>>>> origin/master
 
 namespace Auction_System_WebApi.Controllers
 {
@@ -20,19 +28,11 @@ namespace Auction_System_WebApi.Controllers
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
-        // GET: api/Categories/Active
-        [HttpGet("Active")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetActiveCategories()
+        // GET: api/Categories/Role
+        [HttpGet("{Role}")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(Role role)
         {
-            var activeCategoryList = await _categoryRepository.GetActiveCategoriesAsync();
-            return Ok(activeCategoryList);
-        }
-
-        // GET: api/Categories/Active
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
-        {
-            var activeCategoryList = await _categoryRepository.GetAllCategoriesAsync();
+            var activeCategoryList = await _categoryRepository.GetCategoriesAsync(role);
             return Ok(activeCategoryList);
         }
 

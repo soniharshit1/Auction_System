@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Auction_System_Library_Infrastructure.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Auction_System_Library_Database.Data;
+=======
+﻿using Microsoft.AspNetCore.Mvc;
+using Auction_System_Library_Infrastructure.DTOs;
+>>>>>>> origin/master
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.Interfaces;
 

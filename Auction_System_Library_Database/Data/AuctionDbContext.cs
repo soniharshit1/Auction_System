@@ -61,6 +61,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Approval_Products");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Auction>(entity =>
@@ -86,6 +88,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.SellerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Auctions_Users");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<AuctionProductAttribute>(entity =>
@@ -108,6 +112,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.AuctionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_DifferentialProductAttributes_Auctions");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<AuctionProductImage>(entity =>
@@ -134,6 +140,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.SellerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ProductDifferentialImages_User");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Bid>(entity =>
@@ -158,6 +166,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.BuyerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Bids_Users");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -169,6 +179,8 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+          
+
         });
 
         modelBuilder.Entity<GeneralProductAttribute>(entity =>
@@ -184,6 +196,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ProductAttributes_Product");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Person>(entity =>
@@ -200,7 +214,9 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
-            entity.Property(e => e.Role).HasMaxLength(50);
+            entity.Property(e => e.Role).HasConversion<string>().HasMaxLength(50);
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -216,6 +232,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Products_Category");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Review>(entity =>
@@ -240,6 +258,8 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reviews_User");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -271,7 +291,12 @@ public partial class AuctionDbContext : DbContext
                 .HasForeignKey(d => d.SellerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Transactions_Users_Seller");
+            entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
+
         });
+
+        
+       
 
         OnModelCreatingPartial(modelBuilder);
     }
