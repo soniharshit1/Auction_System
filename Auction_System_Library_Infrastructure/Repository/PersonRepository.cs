@@ -26,7 +26,7 @@ namespace Auction_System_Library_Infrastructure.Repository
             {
                 return null;
             }
-
+            
             person.IsDeleted = true;
 
             //// Soft delete related entities
