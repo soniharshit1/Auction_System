@@ -2,6 +2,7 @@ using Auction_System_Library_Database.Data;
 using Auction_System_Library_Infrastructure.Interface;
 using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Infrastructure.Repository;
+using Auction_System_Library_Infrastucture.Interfaces;
 using Auction_System_Library_Infrastucture.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<AuctionDbContext>(options =>
 builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
 builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
+builder.Services.AddScoped<IBidRepository, BidRepository>();
 
 var app = builder.Build();
 
