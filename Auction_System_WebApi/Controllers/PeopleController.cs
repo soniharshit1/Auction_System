@@ -22,7 +22,7 @@ namespace Auction_System_WebApi.Controllers
         private readonly IPersonRepository _personRepository = personRepository;
 
 
-
+        
         // GET: api/People
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()

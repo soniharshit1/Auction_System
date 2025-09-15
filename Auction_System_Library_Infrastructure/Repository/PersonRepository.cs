@@ -29,42 +29,42 @@ namespace Auction_System_Library_Infrastructure.Repository
 
             person.IsDeleted = true;
 
-            // Soft delete related entities
-            var auctions = _context.Auctions.Where(a => a.SellerId == userOrAgentId);
-            foreach (var auction in auctions)
-            {
-                auction.IsDeleted = true;
-            }
+            //// Soft delete related entities
+            //var auctions = _context.Auctions.Where(a => a.SellerId == userOrAgentId);
+            //foreach (var auction in auctions)
+            //{
+            //    auction.IsDeleted = true;
+            //}
 
-            var bids = _context.Bids.Where(b => b.BuyerId == userOrAgentId);
-            foreach (var bid in bids)
-            {
-                bid.IsDeleted = true;
-            }
+            //var bids = _context.Bids.Where(b => b.BuyerId == userOrAgentId);
+            //foreach (var bid in bids)
+            //{
+            //    bid.IsDeleted = true;
+            //}
 
-            var transactions = _context.Transactions.Where(t => t.BuyerId == userOrAgentId || t.SellerId == userOrAgentId);
-            foreach (var transaction in transactions)
-            {
-                transaction.IsDeleted = true;
-            }
+            //var transactions = _context.Transactions.Where(t => t.BuyerId == userOrAgentId || t.SellerId == userOrAgentId);
+            //foreach (var transaction in transactions)
+            //{
+            //    transaction.IsDeleted = true;
+            //}
 
-            var reviews = _context.Reviews.Where(r => r.UserId == userOrAgentId || r.TargetUserId == userOrAgentId);
-            foreach (var review in reviews)
-            {
-                review.IsDeleted = true;
-            }
+            //var reviews = _context.Reviews.Where(r => r.UserId == userOrAgentId || r.TargetUserId == userOrAgentId);
+            //foreach (var review in reviews)
+            //{
+            //    review.IsDeleted = true;
+            //}
 
-            var approvals = _context.Approvals.Where(a => a.AgentId == userOrAgentId);
-            foreach (var approval in approvals)
-            {
-                approval.IsDeleted = true;
-            }
+            //var approvals = _context.Approvals.Where(a => a.AgentId == userOrAgentId);
+            //foreach (var approval in approvals)
+            //{
+            //    approval.IsDeleted = true;
+            //}
 
-            var images = _context.AuctionProductImages.Where(img => img.SellerId == userOrAgentId);
-            foreach (var image in images)
-            {
-                image.IsDeleted = true;
-            }
+            //var images = _context.AuctionProductImages.Where(img => img.SellerId == userOrAgentId);
+            //foreach (var image in images)
+            //{
+            //    image.IsDeleted = true;
+            //}
 
             await _context.SaveChangesAsync();
             return $"Person with ID {userOrAgentId} and related records soft deleted.";
