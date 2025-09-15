@@ -26,6 +26,7 @@ namespace Auction_System_WebApi.Controllers
         
         // GET: api/People
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
             return Ok(await _personRepository.GetAllPersonsAsync());
@@ -33,6 +34,7 @@ namespace Auction_System_WebApi.Controllers
 
         //// GET: api/People/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
             return Ok(await _personRepository.FindPersonbyIdAsync(id));
@@ -41,8 +43,8 @@ namespace Auction_System_WebApi.Controllers
         //// PUT: api/People/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "User,Agent")]
-        public async Task<IActionResult> UpdatePersonDetailsAsync(int id, [FromBody] updatedPersonDTO dto)
+        [Authorize(Roles = "User,Agent,Admin")]
+        public async Task<IActionResult> UpdatePersonDetailsAsync(int id, [FromBody] UpdatedPersonDTO dto)
         {
             if (dto == null)
             {
@@ -79,7 +81,7 @@ namespace Auction_System_WebApi.Controllers
 
         //// DELETE: api/People/5
         [HttpDelete("{id}")]
-       
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePerson(int id)
         {
             var result = await _personRepository.DeletePersonAsync(id);
