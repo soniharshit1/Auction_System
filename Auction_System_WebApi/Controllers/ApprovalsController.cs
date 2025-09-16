@@ -38,7 +38,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(new { message = "Approval updated successfully.", result });
         }
         [HttpPut]
-        [Route("{id}/Approve")]
+        [Route("Approve/{id}")]
         public async Task<IActionResult> UpdateApprovalStatusAsync(int id, ApprovalDTO approvalDto)
         {
             if(approvalDto == null) return BadRequest("Approval Data is required");
@@ -51,7 +51,7 @@ namespace Auction_System_WebApi.Controllers
         }
 
         [HttpPut]
-        [Route("{id}/Reject")]
+        [Route("Reject/{id}")]
         public async Task<IActionResult> RejectApprovalAsync(int id, [FromQuery] string remark)
         {
 
