@@ -1,11 +1,12 @@
 using Auction_System_Library_Database.Data;
+using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.Interface;
 using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Infrastructure.Repository;
 using Auction_System_Library_Infrastructure.Services;
-using Auction_System_Library_Infrastucture.Interfaces;
 using Auction_System_Library_Infrastucture.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 namespace Auction_System_WebApi
 {
@@ -29,7 +30,8 @@ namespace Auction_System_WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddDbContext<AuctionDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            builder.Services.AddSwaggerGen();
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             // Register repositories
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -38,6 +40,7 @@ namespace Auction_System_WebApi
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<ITokenGeneration, TokenGeneration>();
+            builder.Services.AddTransient<IEmailService, EmailService>();
 
             var app = builder.Build();
 

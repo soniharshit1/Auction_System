@@ -2,6 +2,7 @@
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interface;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Infrastucture.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,16 @@ namespace Auction_System_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuctionsController(IAuctionRepository auctionRepository) : ControllerBase
+    public class AuctionsController : ControllerBase
     {
-        private readonly IAuctionRepository _auctionRepository = auctionRepository;
+        private readonly IAuctionRepository _auctionRepository;
 
-        
+        public AuctionsController(IAuctionRepository auctionRepository)
+        {
+            _auctionRepository = auctionRepository;
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAllAuctions()
         {
@@ -89,6 +95,7 @@ namespace Auction_System_WebApi.Controllers
             };
 
             var response = await _auctionRepository.CreateAuctionsAsync(auction);
+
             return Ok(response);
         }
 

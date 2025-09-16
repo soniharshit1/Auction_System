@@ -1,6 +1,6 @@
 ﻿using Auction_System_Library_Database.Data;
 using Auction_System_Library_Database.Models;
-using Auction_System_Library_Infrastucture.Interfaces;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,10 +13,12 @@ namespace Auction_System_Library_Infrastructure.Repository
     public class BidRepository : IBidRepository
     {
         private readonly AuctionDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public BidRepository(AuctionDbContext context)
+        public BidRepository(AuctionDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<string> PlaceBidAsync(Bid bid)
@@ -49,7 +51,20 @@ namespace Auction_System_Library_Infrastructure.Repository
 
             _context.Bids.Add(bid);
             await _context.SaveChangesAsync();
+            
+
+            var buyer = await _context.People.FindAsync(bid.BuyerId);
+            if (buyer != null)
+            {
+                await _emailService.SendSimpleEmailAsync(
+                    buyer.Email,
+                    "Bid Placed",
+                    $"Hi {buyer.Name}, your bid of {bid.Amount} on auction ID {bid.AuctionId} has been successfully placed."
+                );
+            }
             return $"Bid of {bid.Amount} placed successfully.";
+
+
         }
 
 
