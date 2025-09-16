@@ -60,6 +60,7 @@ namespace Auction_System_WebApi.Controllers
 
         // PUT api/reviews/10
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateReview(int id, UpdateReviewDTO dto)
         {
             var r = await _reviewRepository.UpdateReviewAsync(id, dto);

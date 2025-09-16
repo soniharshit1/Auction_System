@@ -1,11 +1,8 @@
 using Auction_System_Library_Database.Data;
 using Auction_System_Library_Database.Models;
-using Auction_System_Library_Infrastructure.Interface;
 using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Infrastructure.Repository;
 using Auction_System_Library_Infrastructure.Services;
-using Auction_System_Library_Infrastucture.Interfaces;
-using Auction_System_Library_Infrastucture.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
