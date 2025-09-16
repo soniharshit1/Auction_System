@@ -32,13 +32,13 @@ namespace Auction_System_WebApi.Controllers
         }
 
         // GET: api/GeneralProductAttributes/5
-        [HttpGet("{id}")]
+        [HttpGet("attribute/{id}")]
         public async Task<ActionResult<GeneralProductAttribute>> GetGeneralProductAttributeById(int id)
         {
             var generalProductAttribute = await _generalProductAttributesRepository.GetGeneralProductAttributeById(id);
             if (generalProductAttribute == null)
             {
-                return NotFound();
+                return NotFound("No Product attribute exists for this id");
             }
             return Ok(generalProductAttribute);
         }
@@ -55,15 +55,15 @@ namespace Auction_System_WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{productId}")]
         public async Task<IActionResult> PostGeneralProductAttribute(int productId,GeneralProductAttributeDTO generalProductAttributeDTO)
         {
-            var result = await _generalProductAttributesRepository.AddGeneralProductAttribute(generalProductAttributeDTO, productId)
+            var result = await _generalProductAttributesRepository.AddGeneralProductAttribute(generalProductAttributeDTO, productId);
             return Ok(result);
         }
 
         // DELETE: api/GeneralProductAttributes/5
-        [HttpDelete("{id}")]
+        [HttpDelete("attribute/{id}")]
         public async Task<IActionResult> DeleteGeneralProductAttribute(int id)
         {
             var result = await _generalProductAttributesRepository.DeleteGeneralProductAttribute(id);

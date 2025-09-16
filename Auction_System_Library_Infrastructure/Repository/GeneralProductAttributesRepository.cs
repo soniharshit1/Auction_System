@@ -43,8 +43,9 @@ namespace Auction_System_Library_Infrastructure.Repository
             if(attribute == null)
             {
                 return $"Attribute with id: {generalProductAttributeId} not found.";
-            }   
-            _context.GeneralProductAttributes.Remove(attribute);
+            }
+            attribute.IsDeleted = true;
+            _context.GeneralProductAttributes.Update(attribute);
             await _context.SaveChangesAsync();
             return $"Attribute with id: {generalProductAttributeId} is deleted successfully";
         }

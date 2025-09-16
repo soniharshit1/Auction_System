@@ -29,7 +29,7 @@ namespace Auction_System_WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddDbContext<AuctionDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            builder.Services.AddSwaggerGen();
             // Register repositories
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -38,6 +38,10 @@ namespace Auction_System_WebApi
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<ITokenGeneration, TokenGeneration>();
+            builder.Services.AddScoped<IAuctionProductAttributeRepository, AuctionProductAttributeRepository>();
+            builder.Services.AddScoped<IGeneralProductAttributesRepository, GeneralProductAttributesRepository>();
+
+
 
             var app = builder.Build();
 
