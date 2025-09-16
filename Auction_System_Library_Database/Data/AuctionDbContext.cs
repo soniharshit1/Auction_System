@@ -213,7 +213,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.PasswordHash).HasColumnType("nvarchar(max)");
             entity.Property(e => e.Role).HasConversion<string>().HasMaxLength(50);
             entity.HasQueryFilter(p => !(p.IsDeleted ?? false));
 
