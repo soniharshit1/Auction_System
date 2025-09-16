@@ -17,7 +17,7 @@ public partial class Approval
 
     public int AgentId { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public virtual Person Agent { get; set; } = null!;
 
