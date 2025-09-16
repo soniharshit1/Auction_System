@@ -18,34 +18,33 @@ namespace Auction_System_Library_Infrastructure.Repository
         {
             _context = context;
         }
-        public Task AddAsync(AuctionProductAttribute attribute)
+        
+        public async Task<string> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> ExistsAsync(int auctionId, int attributeId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<AuctionProductAttribute?> GetAttributeAsync(int auctionId, int attributeId)
-        {
-            throw new NotImplementedException();
+            var attribute = await _context.AuctionProductAttributes.FindAsync(id);
+            if (attribute != null)
+            {
+                attribute.IsDeleted = true;
+                _context.AuctionProductAttributes.Update(attribute);
+                await _context.SaveChangesAsync();
+                return "Attribute deleted successfully.";
+            }
+            else
+            {
+                return "Attribute not found or has been deleted.";
+            }
         }
 
         public async Task<List<AuctionProductAttributesDTO>> GetAttributesForAuctionAsync(int productId, int auctionId)
         {
             var generalProductAttributes = await _context.GeneralProductAttributes
                 .Where(gpa => gpa.ProductId == productId)
+                .Where(gpa => gpa.IsDeleted == false)
                 .ToListAsync();
 
             var auctionProductAttributes = await _context.AuctionProductAttributes
                 .Where(apa => apa.AuctionId == auctionId)
+                .Where(apa => apa.IsDeleted == false)
                 .ToListAsync();
 
             var result = generalProductAttributes.Select(generalAttr =>
@@ -74,12 +73,16 @@ namespace Auction_System_Library_Infrastructure.Repository
             return result;
         }
 
-        public async Task<string> SaveAttributesAsync(int auctionId, List<AuctionProductAttributesDTO> attributes)
+        public async Task<string> SaveAttributesAsync(int auctionId, List<AddAuctionProductAttributesDTO> attributes)
         {
+            var auction = await _context.Auctions.FindAsync(auctionId);
+            if(auction == null)
+            {
+                return "Auction not found.";
+            }
             var auctionAttributes = attributes.Select(attr => new AuctionProductAttribute
             {
                 AuctionId = auctionId,
-                AttributeId = attr.AttributeId,
                 AttributeValue = attr.AttributeValue
             }).ToList();
 
@@ -89,9 +92,23 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Attributes saved successfully.";
         }
 
-        public Task UpdateAsync(AuctionProductAttribute attribute)
+        public async Task<string> UpdateAsync(int id, AuctionProductAttributesDTO attribute)
         {
-            throw new NotImplementedException();
+            var existingAttribute = await _context.AuctionProductAttributes
+                .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+
+            if (existingAttribute == null)
+            {
+                return "Attribute not found or has been deleted.";
+            }
+
+            existingAttribute.AttributeValue = attribute.AttributeValue;
+
+            _context.AuctionProductAttributes.Update(existingAttribute);
+            await _context.SaveChangesAsync();
+
+            return "Attribute updated successfully.";
         }
+
     }
 }

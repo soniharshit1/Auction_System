@@ -11,6 +11,6 @@ namespace Auction_System_Library_Infrastructure.Interfaces
         Task<Person?> UpdatePersonDetailsAsync(int id, UpdatedPersonDTO person); //for everyone 
         Task<string?> DeletePersonAsync(int userOrAgentId); //only admin
 
-        Task<Person?> FindPersonbyIdAsync(int userOrAgentId); //only admin
+        Task<Person?> FindPersonbyIdAsync(int? userOrAgentId); //only admin
     }
 }

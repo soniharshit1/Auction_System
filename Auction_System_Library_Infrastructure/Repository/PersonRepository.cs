@@ -21,7 +21,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
         public async Task<string?> DeletePersonAsync(int userOrAgentId)
         {
-            var person = await _context.People.FindAsync(userOrAgentId);
+            var person = await _context.People.Where(p => p.IsDeleted != true).FirstOrDefaultAsync(u => u.UserId == userOrAgentId);
             if (person == null)
             {
                 return null;
@@ -71,9 +71,10 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
 
 
-        public async Task<Person?> FindPersonbyIdAsync(int userOrAgentId)
+        public async Task<Person?> FindPersonbyIdAsync(int? userOrAgentId)
         {
-            var person = await _context.People.FindAsync(userOrAgentId);
+            var person = await _context.People.Where(p => p.IsDeleted != true)
+                                   .FirstOrDefaultAsync(u=>u.UserId==userOrAgentId);
             if (person is null)
             {
                 return null;
@@ -81,7 +82,7 @@ namespace Auction_System_Library_Infrastructure.Repository
 
             return person;
         }
-
+        
         public async Task<IEnumerable<Person>> GetAllPersonsAsync()
         {
             return await _context.People.ToListAsync();
@@ -119,7 +120,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         //can only update email and contact number
         public async Task<Person?> UpdatePersonDetailsAsync(int id, UpdatedPersonDTO dto)
         {
-            var person = await _context.People.FindAsync(id);
+            var person = await _context.People.Where(p => p.IsDeleted != true).FirstOrDefaultAsync(u => u.UserId == id);
             if (person is null)
             {
                 return null;
