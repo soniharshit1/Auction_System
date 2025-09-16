@@ -3,6 +3,7 @@ using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Infrastructure.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Auction_System_WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ReviewsController : ControllerBase
@@ -37,6 +39,7 @@ namespace Auction_System_WebApi.Controllers
 
         //Get All reviews for admin
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetAllReviews()
         {
             return Ok(await  _reviewRepository.GetAllReviewsAsync());
@@ -44,6 +47,7 @@ namespace Auction_System_WebApi.Controllers
 
         // POST api/reviews
         [HttpPost]
+        [Authorize(Roles ="User,Agent")]
         public async Task<IActionResult> CreateReview(CreateReviewDTO dto)
         {
             var r = await _reviewRepository.AddReviewAsync(dto);
@@ -56,6 +60,7 @@ namespace Auction_System_WebApi.Controllers
 
         // PUT api/reviews/10
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateReview(int id, UpdateReviewDTO dto)
         {
             var r = await _reviewRepository.UpdateReviewAsync(id, dto);
@@ -68,6 +73,7 @@ namespace Auction_System_WebApi.Controllers
 
         // DELETE api/reviews/10
         [HttpDelete("{id:int}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteReview(int id)
         {
             var r = await _reviewRepository.DeleteReviewAsync(id);

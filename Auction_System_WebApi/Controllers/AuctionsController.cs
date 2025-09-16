@@ -1,7 +1,7 @@
 ﻿using Auction_System_Library_Database.Data;
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
-using Auction_System_Library_Infrastructure.Interface;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Infrastucture.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
