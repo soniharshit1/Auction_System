@@ -17,7 +17,7 @@ public partial class Review
 
     public DateTime? Date { get; set; }
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public virtual Person TargetUser { get; set; } = null!;
 

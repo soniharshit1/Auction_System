@@ -37,6 +37,7 @@ namespace Auction_System_WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddDbContext<AuctionDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
             builder.Services.AddAuthentication(x =>
             {
@@ -97,7 +98,6 @@ namespace Auction_System_WebApi
                 });
             });
 
-
             // Register repositories
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -106,6 +106,8 @@ namespace Auction_System_WebApi
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<ITokenGeneration, TokenGeneration>();
+            builder.Services.AddScoped<IAuctionProductAttributeRepository, AuctionProductAttributeRepository>();
+            builder.Services.AddScoped<IGeneralProductAttributesRepository, GeneralProductAttributesRepository>();
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddTransient<IEmailService, EmailService>();
             var app = builder.Build();

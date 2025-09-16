@@ -10,25 +10,12 @@ namespace Auction_System_Library_Infrastructure.Interfaces
 {
     public interface IAuctionProductAttributeRepository
     {
-        // Get all attributes for a specific auction and product
         Task<List<AuctionProductAttributesDTO>> GetAttributesForAuctionAsync(int productId, int auctionId);
 
-        // Save or update attribute values for an auction
-        Task<string> SaveAttributesAsync(int auctionId, List<AuctionProductAttributesDTO> attributes);
+        Task<string> SaveAttributesAsync(int auctionId, List<AddAuctionProductAttributesDTO> attributes);
 
-        // Get a single attribute value by auction and attribute ID
-        Task<AuctionProductAttribute?> GetAttributeAsync(int auctionId, int attributeId);
+        Task<string> UpdateAsync(int id, AuctionProductAttributesDTO attribute);
 
-        // Add a new auction-specific attribute
-        Task AddAsync(AuctionProductAttribute attribute);
-
-        // Update an existing auction-specific attribute
-        Task UpdateAsync(AuctionProductAttribute attribute);
-
-        // Soft delete an attribute (optional)
-        Task DeleteAsync(int id);
-
-        // Check if an attribute already exists for an auction
-        Task<bool> ExistsAsync(int auctionId, int attributeId);
+        Task<string> DeleteAsync(int id);
     }
 }

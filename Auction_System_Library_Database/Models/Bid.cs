@@ -15,7 +15,7 @@ public partial class Bid
 
     public DateTime? BidTime { get; set; }
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public virtual Auction Auction { get; set; } = null!;
 
