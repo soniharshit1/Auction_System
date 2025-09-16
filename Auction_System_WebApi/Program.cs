@@ -106,8 +106,6 @@ namespace Auction_System_WebApi
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<ITokenGeneration, TokenGeneration>();
-            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-            builder.Services.AddTransient<IEmailService, EmailService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

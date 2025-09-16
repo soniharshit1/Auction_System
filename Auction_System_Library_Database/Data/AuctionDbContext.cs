@@ -38,7 +38,7 @@ public partial class AuctionDbContext : DbContext
     {
         modelBuilder.Entity<Approval>(entity =>
         {
-            entity.HasKey(e => e.ApprovalId).HasName("PK__Approval__328477D49C17CFAD");
+            entity.HasKey(e => e.ApprovalId).HasName("PK__Approval__328477D4D259FA78");
 
             entity.ToTable("Approval");
 
@@ -47,7 +47,6 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.ApprovalDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.Remarks).HasMaxLength(250);
             entity.Property(e => e.Status).HasDefaultValue(false);
@@ -65,12 +64,11 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Auction>(entity =>
         {
-            entity.HasKey(e => e.AuctionId).HasName("PK__Auctions__51004A2CF5166135");
+            entity.HasKey(e => e.AuctionId).HasName("PK__Auctions__51004A2CDC9282BC");
 
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.FinalBid).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.SellerId).HasColumnName("SellerID");
             entity.Property(e => e.StartDate).HasColumnType("datetime");
@@ -90,14 +88,12 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<AuctionProductAttribute>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AuctionP__3214EC27B04C12F3");
+            entity.HasKey(e => e.Id).HasName("PK__AuctionP__3214EC274F05E881");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.AttributeId).HasColumnName("AttributeID");
-            entity.Property(e => e.AttributeName).HasMaxLength(100);
             entity.Property(e => e.AttributeValue).HasMaxLength(100);
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.Attribute).WithMany(p => p.AuctionProductAttributes)
                 .HasForeignKey(d => d.AttributeId)
@@ -112,11 +108,10 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<AuctionProductImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AuctionP__3214EC2791A4DB1C");
+            entity.HasKey(e => e.Id).HasName("PK__AuctionP__3214EC27BF9F9F33");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.SellerId).HasColumnName("SellerID");
 
@@ -138,7 +133,7 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Bid>(entity =>
         {
-            entity.HasKey(e => e.BidId).HasName("PK__Bids__4A733DB2548C1C96");
+            entity.HasKey(e => e.BidId).HasName("PK__Bids__4A733DB26B9243F7");
 
             entity.Property(e => e.BidId).HasColumnName("BidID");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
@@ -147,7 +142,6 @@ public partial class AuctionDbContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.BuyerId).HasColumnName("BuyerID");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
 
             entity.HasOne(d => d.Auction).WithMany(p => p.Bids)
                 .HasForeignKey(d => d.AuctionId)
@@ -162,24 +156,21 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A2BE2C9DCE1");
+            entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A2BA2B3D2E8");
 
             entity.ToTable("Category");
 
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-          
-
         });
 
         modelBuilder.Entity<GeneralProductAttribute>(entity =>
         {
-            entity.HasKey(e => e.AttributeId).HasName("PK__GeneralP__C189298A78BFC0E3");
+            entity.HasKey(e => e.AttributeId).HasName("PK__GeneralP__C189298ADAEC8DA6");
 
             entity.Property(e => e.AttributeId).HasColumnName("AttributeID");
             entity.Property(e => e.AttributeName).HasMaxLength(100);
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
             entity.HasOne(d => d.Product).WithMany(p => p.GeneralProductAttributes)
@@ -190,28 +181,25 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Person>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Person__1788CCAC931B78DF");
+            entity.HasKey(e => e.UserId).HasName("PK__Person__1788CCAC5DF246C3");
 
             entity.ToTable("Person");
 
-            entity.HasIndex(e => e.Email, "UQ__Person__A9D10534878769E5").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Person__A9D10534B6EA034D").IsUnique();
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.ContactNumber).HasMaxLength(20);
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).HasColumnType("nvarchar(max)");
-            entity.Property(e => e.Role).HasConversion<string>().HasMaxLength(50);
+            entity.Property(e => e.Role).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6EDA26BE768");
+            entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6EDE246F8A3");
 
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductName).HasMaxLength(200);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
@@ -222,14 +210,13 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => e.ReviewId).HasName("PK__Reviews__74BC79AEC49B6B27");
+            entity.HasKey(e => e.ReviewId).HasName("PK__Reviews__74BC79AEA0E5ACFE");
 
             entity.Property(e => e.ReviewId).HasColumnName("ReviewID");
             entity.Property(e => e.Comment).HasMaxLength(250);
             entity.Property(e => e.Date)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.TargetUserId).HasColumnName("TargetUserID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -246,15 +233,14 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4B50F4703B");
+            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4BB7E65DF3");
 
-            entity.HasIndex(e => e.AuctionId, "UQ__Transact__51004A2DE3D13EFA").IsUnique();
+            entity.HasIndex(e => e.AuctionId, "UQ__Transact__51004A2DCB7831CE").IsUnique();
 
             entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
             entity.Property(e => e.BuyerId).HasColumnName("BuyerID");
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.PaymentDate).HasColumnType("datetime");
             entity.Property(e => e.PaymentStatus).HasDefaultValue(false);
             entity.Property(e => e.SellerId).HasColumnName("SellerID");
@@ -272,8 +258,9 @@ public partial class AuctionDbContext : DbContext
             entity.HasOne(d => d.Seller).WithMany(p => p.TransactionSellers)
                 .HasForeignKey(d => d.SellerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Transactions_Users_Seller");
+                .HasConstraintName("FK_Transactions_Seller");
         });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

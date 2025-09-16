@@ -11,7 +11,7 @@ public partial class GeneralProductAttribute
 
     public string AttributeName { get; set; } = null!;
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<AuctionProductAttribute> AuctionProductAttributes { get; set; } = new List<AuctionProductAttribute>();
 

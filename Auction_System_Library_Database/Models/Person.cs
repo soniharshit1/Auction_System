@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Auction_System_Library_Database.Enums;
+using System;
 using System.Collections.Generic;
-using Auction_System_Library_Database.Enums;
 
 namespace Auction_System_Library_Database.Models;
 
@@ -12,13 +12,13 @@ public partial class Person
 
     public string Email { get; set; } = null!;
 
-    public string PasswordHash { get; set; } = null!;
+    public string? PasswordHash { get; set; }
 
-    public Role Role { get; set; }
+    public Role Role { get; set; } 
 
     public string? ContactNumber { get; set; }
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 

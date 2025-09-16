@@ -19,7 +19,7 @@ public partial class Transaction
 
     public int SellerId { get; set; }
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public virtual Auction Auction { get; set; } = null!;
 
