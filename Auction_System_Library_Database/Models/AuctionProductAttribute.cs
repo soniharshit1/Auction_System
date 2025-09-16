@@ -9,8 +9,6 @@ public partial class AuctionProductAttribute
 
     public int AuctionId { get; set; }
 
-    public string AttributeName { get; set; } = null!;
-
     public string AttributeValue { get; set; } = null!;
 
     public int AttributeId { get; set; }

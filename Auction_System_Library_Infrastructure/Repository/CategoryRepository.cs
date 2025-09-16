@@ -38,16 +38,18 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Category not found";
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesAsync()
-        {
-            return await _context.Categories
-                .Where(c => c.IsActive == true)
-                .ToListAsync();
-        }
-
         public async Task<IEnumerable<Category>> GetCategoriesAsync(Role role)
         {
-            return await _context.Categories.ToListAsync();
+            if(role == Role.Admin)
+            {
+                return await _context.Categories.ToListAsync();
+            }
+            else
+            {
+                return await _context.Categories
+                .Where(c => c.IsActive == true)
+                .ToListAsync();
+            }
         }
 
         public async Task<string> UpdateCategoryAsync(int id, Category updatedCategory)

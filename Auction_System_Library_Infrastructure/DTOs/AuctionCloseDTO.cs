@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace Auction_System_Library_Infrastructure.DTOs
 {
-    public class UpdatedPersonDTO
+    public class AuctionCloseDTO
     {
-        public string Name { get; set; } = null!;
-
-        public string Email { get; set; } = null!;
-
-        public string? ContactNumber { get; set; }
+        public decimal FinalBid { get; set; }
     }
 }

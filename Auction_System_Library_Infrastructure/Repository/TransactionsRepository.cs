@@ -21,22 +21,22 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
         public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
         {
-            var transactions = await _context.Transactions.ToListAsync();
+            var transactions = await _context.Transactions.Where(t => t.IsDeleted == false).ToListAsync();
 
             return transactions;
 
         }
         public async Task<Transaction?> AddTransactionAsync(TransactionDTO transactionDto)
         {
-            var buyerExists = await _context.People.AnyAsync(p => p.UserId == transactionDto.BuyerId);
+            var buyerExists = await _context.People.Where(p => p.IsDeleted == false).AnyAsync(p => p.UserId == transactionDto.BuyerId);
             if (!buyerExists)
                 return null;
 
-            var sellerExists = await _context.People.AnyAsync(p => p.UserId == transactionDto.SellerId);
+            var sellerExists = await _context.People.Where(p => p.IsDeleted == false).AnyAsync(p => p.UserId == transactionDto.SellerId);
             if (!sellerExists)
                 return null;
 
-            var auctionExists = await _context.Auctions.AnyAsync(p => p.AuctionId == transactionDto.AuctionId);
+            var auctionExists = await _context.Auctions.Where(p => p.IsDeleted == false).AnyAsync(p => p.AuctionId == transactionDto.AuctionId);
             if (!auctionExists)
                 return null;
             var transaction = new Transaction
@@ -56,7 +56,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
         public async Task<Transaction?> UpdatePaymentStatusAsync(int Id, TransactionDTO transactionDto)
         {
-            var transaction = await _context.Transactions.FindAsync(Id);
+            var transaction = await _context.Transactions.FirstOrDefaultAsync(p => p.TransactionId == Id && p.IsDeleted == false);
 
             if (transaction == null) return null;
 
@@ -69,7 +69,9 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
         public async Task<IEnumerable<Transaction>> GetTransactionByUserAsync(int UserId)
         {
-            var transaction = await _context.Transactions.Where(t => t.BuyerId == UserId || t.SellerId == UserId).ToListAsync();
+          var transaction = await _context.Transactions
+               .Where(p => !p.IsDeleted && (p.BuyerId == UserId || p.SellerId == UserId))
+               .ToListAsync();
 
             return transaction;
         }

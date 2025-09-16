@@ -18,7 +18,7 @@ public partial class Person
 
     public string? ContactNumber { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
     public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 
