@@ -235,7 +235,7 @@ public partial class AuctionDbContext : DbContext
         {
             entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4BB7E65DF3");
 
-            entity.HasIndex(e => e.AuctionId, "UQ__Transact__51004A2DCB7831CE").IsUnique();
+            entity.HasIndex(e => e.AuctionId, "UQ__Transact__51004A2DE3D13EFA").IsUnique();
 
             entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
