@@ -1,6 +1,6 @@
 ﻿using Auction_System_Library_Database.Data;
 using Auction_System_Library_Database.Models;
-using Auction_System_Library_Infrastucture.Interfaces;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

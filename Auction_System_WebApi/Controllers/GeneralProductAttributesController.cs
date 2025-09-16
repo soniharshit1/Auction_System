@@ -58,7 +58,7 @@ namespace Auction_System_WebApi.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> PostGeneralProductAttribute(int productId,GeneralProductAttributeDTO generalProductAttributeDTO)
         {
-            var result = await _generalProductAttributesRepository.AddGeneralProductAttribute(generalProductAttributeDTO, productId)
+            var result = await _generalProductAttributesRepository.AddGeneralProductAttribute(generalProductAttributeDTO, productId);
             return Ok(result);
         }
 
