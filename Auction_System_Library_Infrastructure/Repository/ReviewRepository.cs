@@ -23,7 +23,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         //reviewer - buyer - the one who reviews the seller
         public async Task<Review?> AddReviewAsync(CreateReviewDTO dto)
         {
-            var checkReviewer = _context.Reviews.AnyAsync(p=>p.UserId == dto.UserId);
+            var checkReviewer = _context.Reviews.Where(p => p.IsDeleted != true).FirstOrDefaultAsync(p=>p.UserId == dto.UserId);
             if(checkReviewer is null)
             {
                 return null;
@@ -49,7 +49,7 @@ namespace Auction_System_Library_Infrastructure.Repository
 
         public async Task<string?> DeleteReviewAsync(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Reviews.Where(p => p.IsDeleted != true).FirstOrDefaultAsync(u => u.UserId == id); ;
             if (review == null) return null;
             review.IsDeleted = true;
             _context.Reviews.Update(review);
@@ -72,7 +72,7 @@ namespace Auction_System_Library_Infrastructure.Repository
 
         public async Task<Review?> UpdateReviewAsync(int id, UpdateReviewDTO dto)
         {
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Reviews.Where(p => p.IsDeleted != true).FirstOrDefaultAsync(u => u.UserId == id); ;
             if (review == null) return null;
 
             review.Rating = dto.Rating;

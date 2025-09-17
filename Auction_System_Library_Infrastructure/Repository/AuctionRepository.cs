@@ -1,5 +1,4 @@
 ﻿using Auction_System_Library_Database.Data;
-using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Auction_System_Library_Infrastructure.Interface;
+using Auction_System_Library_Infrastructure.Interfaces;
 
-namespace Auction_System_Library_Infrastucture.Repository
+namespace Auction_System_Library_Infrastructure.Repository
 {
     public class AuctionRepository : IAuctionRepository
 
