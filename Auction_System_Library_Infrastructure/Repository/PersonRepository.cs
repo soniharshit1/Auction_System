@@ -90,10 +90,10 @@ namespace Auction_System_Library_Infrastructure.Repository
 
         public async Task<Person> RegisterPersonAsync(PersonDTO dto)
         {
-        //    if (dto.Role is not Auction_System_Library_Database.Enums.Role.User && dto.Role is not Auction_System_Library_Database.Enums.Role.Agent)
-        //    {
-        //        throw new ArgumentException("Invalid Role. Only User or Agent Allowed");
-        //    }
+            if (dto.Role is not Auction_System_Library_Database.Enums.Role.User && dto.Role is not Auction_System_Library_Database.Enums.Role.Agent)
+            {
+                throw new ArgumentException("Invalid Role. Only User or Agent Allowed");
+            }
             if (await _context.People.AnyAsync(p => p.Name == dto.Name))
             {
                 throw new ArgumentException("name already exists");

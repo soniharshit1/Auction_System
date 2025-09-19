@@ -21,7 +21,7 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .ToListAsync();
         }
 
-        public async Task<Product?> GetProductByIdAsync(int id)
+        public async Task<Product?> GetProductByIdAsync(int? id)
         {
            return await FindProductWithId(id);
         }
@@ -61,7 +61,7 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Product not found";
         }
 
-        private async Task<Product?> FindProductWithId(int id)
+        private async Task<Product?> FindProductWithId(int? id)
         {
             return await _context.Products
                 .Where(p => p.ProductId == id)

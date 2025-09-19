@@ -11,7 +11,7 @@ namespace Auction_System_Library_Infrastructure.Interfaces
     {
         Task<IEnumerable<Product>> GetProductsAsync();
 
-        Task<Product?> GetProductByIdAsync(int id);
+        Task<Product?> GetProductByIdAsync(int? id);
 
         Task<Product?> UpdateProductAsync(int id, Product updatedProduct);
 
