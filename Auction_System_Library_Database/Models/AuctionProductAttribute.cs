@@ -13,7 +13,7 @@ public partial class AuctionProductAttribute
 
     public int AttributeId { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public virtual GeneralProductAttribute Attribute { get; set; } = null!;
 

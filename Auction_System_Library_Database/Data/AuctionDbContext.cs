@@ -197,7 +197,7 @@ public partial class AuctionDbContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
-            entity.Property(e => e.Role).HasMaxLength(50);
+            entity.Property(e => e.Role).HasMaxLength(50).HasConversion<string>();
         });
 
         modelBuilder.Entity<Product>(entity =>

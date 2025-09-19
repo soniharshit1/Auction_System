@@ -17,7 +17,7 @@ public partial class Approval
 
     public int AgentId { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public int AuctionId { get; set; }
 

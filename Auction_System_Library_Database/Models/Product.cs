@@ -11,7 +11,7 @@ public partial class Product
 
     public int CategoryId { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool? IsDeleted { get; set; } = false;
 
     public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 
