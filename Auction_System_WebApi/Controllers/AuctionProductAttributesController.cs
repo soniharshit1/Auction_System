@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Auction_System_Library_Database.Data;
 using Auction_System_Library_Database.Models;
+using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Infrastructure.DTOs;
 
 namespace Auction_System_WebApi.Controllers
 {
@@ -14,95 +16,48 @@ namespace Auction_System_WebApi.Controllers
     [ApiController]
     public class AuctionProductAttributesController : ControllerBase
     {
-        private readonly AuctionDbContext _context;
+        private readonly IAuctionProductAttributeRepository _auctionProductAttributeRepository;
 
-        public AuctionProductAttributesController(AuctionDbContext context)
+        public AuctionProductAttributesController(IAuctionProductAttributeRepository auctionProductAttributeRepository)
         {
-            _context = context;
+            _auctionProductAttributeRepository = auctionProductAttributeRepository;
         }
 
         // GET: api/AuctionProductAttributes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuctionProductAttribute>>> GetAuctionProductAttributes()
+        public async Task<ActionResult<IEnumerable<AuctionProductAttribute>>> GetAuctionProductAttributes([FromQuery] int? productId, [FromQuery] int? auctionId)
         {
-            return await _context.AuctionProductAttributes.ToListAsync();
+            if (productId == null || auctionId == null)
+            {
+                return BadRequest("Both productId and auctionId are required.");
+            }
+
+            var result = await _auctionProductAttributeRepository.GetAttributesForAuctionAsync(productId.Value, auctionId.Value);
+            return Ok(result);
         }
 
-        // GET: api/AuctionProductAttributes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AuctionProductAttribute>> GetAuctionProductAttribute(int id)
-        {
-            var auctionProductAttribute = await _context.AuctionProductAttributes.FindAsync(id);
-
-            if (auctionProductAttribute == null)
-            {
-                return NotFound();
-            }
-
-            return auctionProductAttribute;
-        }
-
-        // PUT: api/AuctionProductAttributes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAuctionProductAttribute(int id, AuctionProductAttribute auctionProductAttribute)
-        {
-            if (id != auctionProductAttribute.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(auctionProductAttribute).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AuctionProductAttributeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/AuctionProductAttributes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<AuctionProductAttribute>> PostAuctionProductAttribute(AuctionProductAttribute auctionProductAttribute)
+        public async Task<ActionResult<AuctionProductAttribute>> PostAuctionProductAttribute([FromQuery]int auctionId,[FromQuery]int attributeId, [FromQuery]string attributeValue)
         {
-            _context.AuctionProductAttributes.Add(auctionProductAttribute);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAuctionProductAttribute", new { id = auctionProductAttribute.Id }, auctionProductAttribute);
+            var result = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId, attributeId, attributeValue);
+            if(result == "Auction not found.")
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
 
         // DELETE: api/AuctionProductAttributes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuctionProductAttribute(int id)
         {
-            var auctionProductAttribute = await _context.AuctionProductAttributes.FindAsync(id);
-            if (auctionProductAttribute == null)
+            var result = await _auctionProductAttributeRepository.DeleteAsync(id);
+            if(result == "Attribute not found or has been deleted.")
             {
-                return NotFound();
+                return NotFound(result);
             }
-
-            _context.AuctionProductAttributes.Remove(auctionProductAttribute);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(result);
         }
 
-        private bool AuctionProductAttributeExists(int id)
-        {
-            return _context.AuctionProductAttributes.Any(e => e.Id == id);
-        }
     }
 }

@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace Auction_System_Library_Infrastructure.DTOs
 {
-    public class BidCreateDTO
+    public class AddAuctionProductAttributesDTO
     {
-
-        public int AuctionId { get; set; }
-        public int BuyerId { get; set; }
-        public decimal Amount { get; set; }
-
+        public string AttributeValue { get; set; } = null!;
     }
 }

@@ -15,7 +15,7 @@ public partial class AuctionProductImage
 
     public byte[]? ProductImages { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public virtual Auction Auction { get; set; } = null!;
 

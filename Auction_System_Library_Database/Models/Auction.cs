@@ -21,7 +21,9 @@ public partial class Auction
 
     public bool? Status { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
+
+    public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 
     public virtual ICollection<AuctionProductAttribute> AuctionProductAttributes { get; set; } = new List<AuctionProductAttribute>();
 
