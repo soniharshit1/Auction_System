@@ -102,6 +102,8 @@ namespace Auction_System_WebApi
             builder.Services.AddScoped<IGeneralProductAttributesRepository, GeneralProductAttributesRepository>();
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddTransient<IEmailService, EmailService>();
+            builder.Services.AddScoped<IApprovalsRepository, ApprovalsRepository>();
+            builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

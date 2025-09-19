@@ -17,9 +17,13 @@ public partial class Approval
 
     public int AgentId { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
+
+    public int AuctionId { get; set; }
 
     public virtual Person Agent { get; set; } = null!;
+
+    public virtual Auction Auction { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;
 }
