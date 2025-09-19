@@ -56,6 +56,11 @@ public partial class AuctionDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Approval_User");
 
+            entity.HasOne(d => d.Auction).WithMany(p => p.Approvals)
+                .HasForeignKey(d => d.AuctionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Approval_Auctions");
+
             entity.HasOne(d => d.Product).WithMany(p => p.Approvals)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -235,7 +240,7 @@ public partial class AuctionDbContext : DbContext
         {
             entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4BB7E65DF3");
 
-            entity.HasIndex(e => e.AuctionId, "UQ__Transact__51004A2DE3D13EFA").IsUnique();
+            entity.HasIndex(e => e.AuctionId, "UQ__Transact__51004A2DCB7831CE").IsUnique();
 
             entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
