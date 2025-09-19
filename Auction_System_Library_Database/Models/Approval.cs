@@ -19,7 +19,11 @@ public partial class Approval
 
     public bool IsDeleted { get; set; }
 
+    public int AuctionId { get; set; }
+
     public virtual Person Agent { get; set; } = null!;
+
+    public virtual Auction Auction { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;
 }

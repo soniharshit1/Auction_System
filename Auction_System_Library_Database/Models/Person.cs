@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Auction_System_Library_Database.Enums;
 
 namespace Auction_System_Library_Database.Models;
 
@@ -14,7 +13,7 @@ public partial class Person
 
     public string PasswordHash { get; set; } = null!;
 
-    public Role Role { get; set; }
+    public string Role { get; set; } = null!;
 
     public string? ContactNumber { get; set; }
 
