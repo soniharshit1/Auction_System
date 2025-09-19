@@ -3,6 +3,7 @@ using Auction_System_Library_Database.Enums;
 using Auction_System_Library_Database.Models;
 using Microsoft.AspNetCore.Mvc;
 using Auction_System_Library_Infrastructure.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Auction_System_WebApi.Controllers
@@ -14,7 +15,7 @@ namespace Auction_System_WebApi.Controllers
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
         // GET: api/Categories/Role
-        [HttpGet("{Role}")]
+        [HttpGet("{role}")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories(Role role)
         {
             var activeCategoryList = await _categoryRepository.GetCategoriesAsync(role);
@@ -23,6 +24,7 @@ namespace Auction_System_WebApi.Controllers
 
         // PUT: api/Categories/5
         [HttpPut("{id}")]
+
         public async Task<IActionResult> PutCategory(int id, CategoryDTO category)
         {
             var cat = new Category()
