@@ -103,12 +103,14 @@ namespace Auction_System_Library_Infrastructure.Repository
             var bid = await _context.Bids.FindAsync(bidId);
             if (bid != null)
             {
-                _context.Bids.Remove(bid);
+                bid.IsDeleted = true;
+                _context.Bids.Update(bid);
                 await _context.SaveChangesAsync();
-                return $"Bid {bidId} deleted successfully.";
+                return $"Bid {bidId} marked as deleted successfully.";
             }
             return "Bid not found.";
         }
+
     }
 }
 

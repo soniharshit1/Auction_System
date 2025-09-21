@@ -85,9 +85,10 @@ namespace Auction_System_Library_Infrastructure.Repository
             var auction = await _context.Auctions.FindAsync(id);
             if (auction != null)
             {
-                _context.Auctions.Remove(auction);
+                auction.IsDeleted = true;
+                _context.Auctions.Update(auction);
                 await _context.SaveChangesAsync();
-                return $"Auction {id} deleted successfully.";
+                return $"Auction {id} marked as deleted successfully.";
             }
             return "Auction not found.";
         }
