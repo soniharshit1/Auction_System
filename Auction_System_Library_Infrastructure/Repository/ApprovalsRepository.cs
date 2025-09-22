@@ -45,6 +45,7 @@ namespace Auction_System_Library_Infrastructure.Repository
             approval.ApprovalDate = approvalDto.ApprovalDate ?? DateTime.UtcNow;
             approval.Remarks = approvalDto.Remarks;
             approval.AgentId = approvalDto.AgentId;
+            approval.AuctionId = approvalDto.AuctionId;
 
             await _context.SaveChangesAsync();
             return approval;

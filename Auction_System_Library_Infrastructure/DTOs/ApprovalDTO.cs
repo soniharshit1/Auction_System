@@ -19,5 +19,6 @@ namespace Auction_System_Library_Infrastructure.DTOs
         public string? Remarks { get; set; }
 
         public int AgentId { get; set; }
+        public int AuctionId { get; set; }
     }
 }
