@@ -25,6 +25,8 @@ public partial class Auction
 
     public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
 
+    public virtual ICollection<Approval> Approvals { get; set; } = new List<Approval>();
+
     public virtual ICollection<AuctionProductAttribute> AuctionProductAttributes { get; set; } = new List<AuctionProductAttribute>();
 
     public virtual ICollection<AuctionProductImage> AuctionProductImages { get; set; } = new List<AuctionProductImage>();

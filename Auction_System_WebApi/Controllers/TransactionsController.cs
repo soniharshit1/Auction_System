@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Auction_System_WebApi.Controllers
 {
     [Route("api/[controller]")]
@@ -26,6 +28,7 @@ namespace Auction_System_WebApi.Controllers
 
         // GET: api/Transactions
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
             return Ok(await _TransactionsRepository.GetAllTransactionsAsync());
@@ -50,6 +53,7 @@ namespace Auction_System_WebApi.Controllers
         }
         [HttpPut]
         [Route("{Id}")]
+        [Authorize(Roles ="Admin") ]
         public async Task<IActionResult> UpdatePaymentStatusAsync(int Id, [FromBody] TransactionDTO transactionDto)
         {
             if (transactionDto == null) return BadRequest("Transaction Data is required");
