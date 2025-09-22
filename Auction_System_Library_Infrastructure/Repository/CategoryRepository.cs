@@ -41,6 +41,7 @@ namespace Auction_System_Library_Infrastructure.Repository
             if (category != null) 
             {
                 category.IsActive = false;
+                _context.Categories.Update(category);
                 _context.SaveChanges();
                 return "Category deleted successfully";
             }
