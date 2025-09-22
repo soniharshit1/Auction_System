@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
- 
 namespace Auction_System_WebApi
 {
     public class Program
@@ -17,7 +16,6 @@ namespace Auction_System_WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
- 
             // Add services to the container.
             builder.Services.AddCors(options =>
             {
@@ -27,17 +25,14 @@ namespace Auction_System_WebApi
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
- 
             builder.Services.AddControllers()
                  .AddJsonOptions(options =>
                  {
                      options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                  });
- 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddDbContext<AuctionDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
- 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
             builder.Services.AddAuthentication(x =>
             {
@@ -66,8 +61,7 @@ namespace Auction_System_WebApi
                     };
                 });
 
- 
- 
+
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -78,7 +72,6 @@ namespace Auction_System_WebApi
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 });
- 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -97,7 +90,6 @@ namespace Auction_System_WebApi
                     }
                 });
             });
- 
             // Register repositories
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -113,7 +105,6 @@ namespace Auction_System_WebApi
             builder.Services.AddScoped<IApprovalsRepository, ApprovalsRepository>();
             builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
             var app = builder.Build();
- 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -123,13 +114,11 @@ namespace Auction_System_WebApi
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
                 });
             }
- 
             app.UseHttpsRedirection();
             app.UseCors("AllowLocalhost");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
- 
             app.Run();
         }
     }
