@@ -21,10 +21,19 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
         public async Task<string> AddCategoryAsync(Category category)
         {
+            bool categoryExists = await _context.Categories
+                .AnyAsync(c => c.CategoryName.ToLower() == category.CategoryName.ToLower());
+
+            if (categoryExists)
+            {
+                return $"Category '{category.CategoryName}' already exists. Please enter a different category.";
+            }
+
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
-            return $"Category {category.CategoryName} added successfully"; ;
+            return $"Category '{category.CategoryName}' added successfully.";
         }
+
 
         public async Task<string> DeleteCategoryAsync(int id)
         {

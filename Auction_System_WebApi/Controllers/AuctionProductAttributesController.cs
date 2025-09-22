@@ -36,20 +36,11 @@ namespace Auction_System_WebApi.Controllers
             return Ok(result);
         }
 
-
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAuctionProductAttribute(int id, AuctionProductAttributesDTO auctionProductAttributeDto)
-        {
-            return Ok(await _auctionProductAttributeRepository.UpdateAsync(id, auctionProductAttributeDto));
-        }
-        // error -
-         //even though there is no auction id in database, its showing attributes saved successfull
         [HttpPost]
-        public async Task<ActionResult<AuctionProductAttribute>> PostAuctionProductAttribute([FromQuery]int auctionId,[FromQuery] List<AddAuctionProductAttributesDTO> attributes)
+        public async Task<ActionResult<AuctionProductAttribute>> PostAuctionProductAttribute([FromQuery]int auctionId,[FromQuery]int attributeId, [FromQuery]string attributeValue)
         {
-            var result = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId, attributes);
-            if(result == "Auction not found." || result == "Attribute not found or has been deleted.")
+            var result = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId, attributeId, attributeValue);
+            if(result == "Auction not found.")
             {
                 return NotFound(result);
             }

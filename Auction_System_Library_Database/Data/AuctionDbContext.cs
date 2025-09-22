@@ -38,6 +38,7 @@ public partial class AuctionDbContext : DbContext
     {
         modelBuilder.Entity<Approval>(entity =>
         {
+
             entity.HasKey(e => e.ApprovalId).HasName("PK__Approval__328477D4D259FA78");
 
             entity.ToTable("Approval");
@@ -69,6 +70,7 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Auction>(entity =>
         {
+
             entity.HasKey(e => e.AuctionId).HasName("PK__Auctions__51004A2CDC9282BC");
 
             entity.Property(e => e.AuctionId).HasColumnName("AuctionID");
@@ -161,7 +163,9 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
+
             entity.HasKey(e => e.CategoryId).HasName("PK__Category__19093A2BA2B3D2E8");
+
 
             entity.ToTable("Category");
 
@@ -172,6 +176,7 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<GeneralProductAttribute>(entity =>
         {
+
             entity.HasKey(e => e.AttributeId).HasName("PK__GeneralP__C189298ADAEC8DA6");
 
             entity.Property(e => e.AttributeId).HasColumnName("AttributeID");
@@ -186,25 +191,35 @@ public partial class AuctionDbContext : DbContext
 
         modelBuilder.Entity<Person>(entity =>
         {
+
             entity.HasKey(e => e.UserId).HasName("PK__Person__1788CCAC5DF246C3");
 
             entity.ToTable("Person");
 
             entity.HasIndex(e => e.Email, "UQ__Person__A9D10534B6EA034D").IsUnique();
+            entity.HasKey(e => e.UserId).HasName("PK__Person__1788CCAC931B78DF");
+
+            entity.ToTable("Person");
+
+            entity.HasIndex(e => e.Email, "UQ__Person__A9D10534878769E5").IsUnique();
+
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.ContactNumber).HasMaxLength(20);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.Role).HasMaxLength(50);
+            entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.Role).HasMaxLength(50).HasConversion<string>();
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
+
             entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6EDE246F8A3");
 
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.ProductName).HasMaxLength(200);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
@@ -263,7 +278,7 @@ public partial class AuctionDbContext : DbContext
             entity.HasOne(d => d.Seller).WithMany(p => p.TransactionSellers)
                 .HasForeignKey(d => d.SellerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Transactions_Seller");
+                .HasConstraintName("FK_Transactions_Users_Seller");
         });
 
         OnModelCreatingPartial(modelBuilder);

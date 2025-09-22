@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auction_System_Library_Database.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Auction_System_Library_Database.Models;
