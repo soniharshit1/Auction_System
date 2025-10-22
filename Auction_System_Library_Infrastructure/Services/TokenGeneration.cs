@@ -32,15 +32,13 @@ namespace Auction_System_Library_Infrastructure.Services
                 new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
                 new Claim(ClaimTypes.Role,user.Role.ToString()),
                 new Claim(ClaimTypes.Email,user.Email),
-                
-                
             };
 
             //Define the Token Object
             var token = new JwtSecurityToken(
 
-                  issuer: "jyothika.com",
-                  audience: "Training",
+                  issuer: "Auction_System.com",
+                  audience: "Client",
                   claims: claims,
                   expires: DateTime.Now.AddHours(1),
                   signingCredentials: securityCredentials

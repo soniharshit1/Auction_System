@@ -8,10 +8,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net;
-using System.Net.Mail;
-using Microsoft.Extensions.Options;
-using Auction_System_Library_Database.Models;
 
 
 namespace Auction_System_Library_Infrastructure.Services

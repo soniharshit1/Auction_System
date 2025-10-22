@@ -73,8 +73,10 @@ namespace Auction_System_Library_Infrastructure.Repository
             {
                 return "Auction not found.";
             }
+
             bool isGeneralAttributeDeleted = await _context.GeneralProductAttributes
             .AnyAsync(gpa => gpa.AttributeId == attributeId && gpa.IsDeleted);
+
             if (isGeneralAttributeDeleted)
             {
                 throw new Exception("Attribute not found");
