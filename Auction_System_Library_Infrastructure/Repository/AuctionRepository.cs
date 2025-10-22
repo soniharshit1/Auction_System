@@ -1,5 +1,4 @@
 ﻿using Auction_System_Library_Database.Data;
-using Auction_System_Library_Infrastructure.Interfaces;
 using Auction_System_Library_Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,18 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Auction_System_Library_Infrastructure.Interface;
+using Auction_System_Library_Infrastructure.Interfaces;
 
-namespace Auction_System_Library_Infrastucture.Repository
+namespace Auction_System_Library_Infrastructure.Repository
 {
     public class AuctionRepository : IAuctionRepository
 
     {
         private readonly AuctionDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public AuctionRepository(AuctionDbContext context)
+        public AuctionRepository(AuctionDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
@@ -44,7 +45,20 @@ namespace Auction_System_Library_Infrastucture.Repository
         {
             _context.Auctions.Add(auction);
             await _context.SaveChangesAsync();
+
+            var seller = await _context.People.FindAsync(auction.SellerId);
+            if (seller != null)
+            {
+                await _emailService.SendSimpleEmailAsync(
+                    seller.Email,
+                    "Auction Created",
+                    $"Hi {seller.Name}, your auction for product ID {auction.ProductId} has been successfully created."
+                    );
+            }
+
             return $"Auction for product {auction.ProductId} created successfully.";
+
+
         }
 
 
@@ -71,9 +85,10 @@ namespace Auction_System_Library_Infrastucture.Repository
             var auction = await _context.Auctions.FindAsync(id);
             if (auction != null)
             {
-                _context.Auctions.Remove(auction);
+                auction.IsDeleted = true;
+                _context.Auctions.Update(auction);
                 await _context.SaveChangesAsync();
-                return $"Auction {id} deleted successfully.";
+                return $"Auction {id} marked as deleted successfully.";
             }
             return "Auction not found.";
         }

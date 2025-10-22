@@ -20,8 +20,9 @@ namespace Auction_System_WebApi.Controllers
 
         // GET: api/Products/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product?>> GetProduct(int id)
+        public async Task<ActionResult<Product?>> GetProduct(int? id)
         {
+            if (id == null) return BadRequest("Please enter a valid id");
             Product? product = await _productRepository.GetProductByIdAsync(id);
 
             return product;

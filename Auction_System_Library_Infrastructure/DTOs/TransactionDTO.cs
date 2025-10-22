@@ -6,12 +6,19 @@ using System.Threading.Tasks;
 
 namespace Auction_System_Library_Infrastructure.DTOs
 {
-    public class BidCreateDTO
+    public class TransactionDTO
     {
+        public int BuyerId { get; set; }
 
         public int AuctionId { get; set; }
-        public int BuyerId { get; set; }
+
         public decimal Amount { get; set; }
+
+        public bool? PaymentStatus { get; set; }
+
+        public DateTime? PaymentDate { get; set; }
+
+        public int SellerId { get; set; }
 
     }
 }

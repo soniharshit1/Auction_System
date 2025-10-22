@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Auction_System_Library_Database.Enums;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 
 namespace Auction_System_WebApi.Controllers
 {
@@ -22,8 +25,8 @@ namespace Auction_System_WebApi.Controllers
     {
         private readonly IPersonRepository _personRepository = personRepository;
 
+  
 
-        
         // GET: api/People
         [HttpGet]
         [Authorize(Roles = "Admin")]
