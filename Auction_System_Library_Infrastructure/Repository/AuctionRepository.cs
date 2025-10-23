@@ -93,6 +93,16 @@ namespace Auction_System_Library_Infrastructure.Repository
             }
 
             return "Failed to create auction.";
+
+            //var seller = await _context.People.FindAsync(auction.SellerId);
+            //if (seller != null)
+            //{
+            //    await _emailService.SendSimpleEmailAsync(
+            //        seller.Email,
+            //        "Auction Created",
+            //        $"Hi {seller.Name}, your auction for product ID {auction.ProductId} has been successfully created."
+            //        );
+            //}
         }
 
 
@@ -127,15 +137,12 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Auction not found.";
         }
 
-
-
         public async Task<IEnumerable<Auction>> GetAuctionsBySellerAsync(int sellerId)
         {
             return await _context.Auctions
                 .Where(a => a.SellerId == sellerId)
                 .ToListAsync();
         }
-
 
         public async Task<IEnumerable<Auction>> GetAuctionsByProductAsync(int productId)
         {

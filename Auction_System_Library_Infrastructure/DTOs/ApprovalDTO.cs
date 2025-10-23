@@ -8,10 +8,6 @@ namespace Auction_System_Library_Infrastructure.DTOs
 {
     public class ApprovalDTO
     {
-        public int ApprovalId { get; set; }
-
-        public int ProductId { get; set; }
-
         public DateTime? ApprovalDate { get; set; }
 
         public bool? Status { get; set; }
@@ -19,5 +15,7 @@ namespace Auction_System_Library_Infrastructure.DTOs
         public string? Remarks { get; set; }
 
         public int AgentId { get; set; }
+
+        public int AuctionId { get; set; }
     }
 }

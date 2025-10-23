@@ -33,7 +33,7 @@ namespace Auction_System_WebApi.Controllers
             if (id == null) return BadRequest("Please enter a valid id");
             Product? product = await _productRepository.GetProductByIdAsync(id);
 
-            return product;
+            return Ok(product);
         }
 
         // PUT: api/Products/id

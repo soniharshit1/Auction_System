@@ -34,7 +34,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-        
+
         [HttpGet("Active")]
         public async Task<ActionResult<IEnumerable<Auction>>> GetActiveAuctions()
         {
@@ -87,7 +87,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-        
+
         [HttpGet("Product/{productId}")]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAuctionsByProduct(int productId)
         {
@@ -142,7 +142,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(response);
         }
 
-        
+
         [HttpPatch("{id}/Close")]
         public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
         {
@@ -154,7 +154,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(response);
         }
 
-        
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteAuction(int id)
         {

@@ -11,6 +11,7 @@ namespace Auction_System_Library_Infrastructure.Interfaces
     public interface IAuctionProductAttributeRepository
     {
         Task<List<AuctionProductAttributesDTO>> GetAttributesForAuctionAsync(int productId, int auctionId);
+
         Task<string> DeleteAsync(int id);
     }
 }
