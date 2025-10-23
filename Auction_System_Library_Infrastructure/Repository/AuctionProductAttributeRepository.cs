@@ -66,30 +66,26 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
 
 
-        public async Task<string> SaveAttributesAsync(int auctionId, int attributeId, string attributeValue)
+        public async Task<string> SaveAttributesAsync(int productId, int attributeId, string attributeValue)
         {
-            var auction = await _context.Auctions.FindAsync(auctionId);
-            if(auction == null)
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
             {
-                return "Auction not found.";
+                return "Product not found.";
             }
+            var gpa = await _context.GeneralProductAttributes
+                .Where(g => g.ProductId == productId && g.IsDeleted == false && g.AttributeId == attributeId)
+                .FirstOrDefaultAsync();
 
-            bool isGeneralAttributeDeleted = await _context.GeneralProductAttributes
-            .AnyAsync(gpa => gpa.AttributeId == attributeId && gpa.IsDeleted);
+            if (gpa == null) return "No general product attribute found";
 
-            if (isGeneralAttributeDeleted)
+            var apa = new AuctionProductAttribute
             {
-                throw new Exception("Attribute not found");
-            }
-
-            var attribute = new AuctionProductAttribute
-            {
-                AuctionId = auctionId,
-                AttributeValue = attributeValue,
                 AttributeId = attributeId,
-                IsDeleted = false
+                AttributeValue = attributeValue
             };
-            _context.AuctionProductAttributes.Add(attribute);
+
+            await _context.AuctionProductAttributes.AddAsync(apa);
             await _context.SaveChangesAsync();
 
             return "Attributes saved successfully.";
