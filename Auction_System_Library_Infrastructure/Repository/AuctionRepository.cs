@@ -1,12 +1,15 @@
 ﻿using Auction_System_Library_Database.Data;
 using Auction_System_Library_Database.Models;
+using Auction_System_Library_Infrastructure.DTOs;
+using Auction_System_Library_Infrastructure.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Auction_System_Library_Infrastructure.Interfaces;
 
 namespace Auction_System_Library_Infrastructure.Repository
 {
@@ -50,10 +53,46 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .FirstOrDefaultAsync(a => a.AuctionId == id);
         }
 
-        public async Task<int> CreateAuctionsAsync(Auction auction)
+        public async Task<string> CreateAuctionWithAttributesAsync(int productId,int sellerId,DateTime startDate,DateTime endDate,decimal startPrice,List<AddAuctionProductAttributesDTO> attributes)
         {
-            _context.Auctions.Add(auction);
-            await _context.SaveChangesAsync();
+            using var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = "CreateAuctionWithAttributes"; 
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add(new SqlParameter("@ProductId", productId));
+            command.Parameters.Add(new SqlParameter("@SellerId", sellerId));
+            command.Parameters.Add(new SqlParameter("@StartDate", startDate));
+            command.Parameters.Add(new SqlParameter("@EndDate", endDate));
+            command.Parameters.Add(new SqlParameter("@StartPrice", startPrice));
+
+            var tvp = new DataTable();
+            tvp.Columns.Add("AttributeId", typeof(int));
+            tvp.Columns.Add("AttributeValue", typeof(string));
+
+            foreach (var attr in attributes)
+            {
+                tvp.Rows.Add(attr.AttributeId, attr.AttributeValue);
+            }
+
+            var tvpParam = new SqlParameter("@Attributes", tvp)
+            {
+                SqlDbType = SqlDbType.Structured,
+                TypeName = "AuctionAttributeType" 
+            };
+            command.Parameters.Add(tvpParam);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var message = reader["Message"].ToString();
+                var auctionId = reader["AuctionId"].ToString();
+                return $"{message} (Auction ID: {auctionId})";
+            }
+
+            return "Failed to create auction.";
 
             //var seller = await _context.People.FindAsync(auction.SellerId);
             //if (seller != null)
@@ -64,8 +103,6 @@ namespace Auction_System_Library_Infrastructure.Repository
             //        $"Hi {seller.Name}, your auction for product ID {auction.ProductId} has been successfully created."
             //        );
             //}
-
-            return auction.AuctionId;
         }
 
 
@@ -100,15 +137,12 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Auction not found.";
         }
 
-
-
         public async Task<IEnumerable<Auction>> GetAuctionsBySellerAsync(int sellerId)
         {
             return await _context.Auctions
                 .Where(a => a.SellerId == sellerId)
                 .ToListAsync();
         }
-
 
         public async Task<IEnumerable<Auction>> GetAuctionsByProductAsync(int productId)
         {

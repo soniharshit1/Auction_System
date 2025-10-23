@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Auction_System_Library_Database.Models;
+using Auction_System_Library_Infrastructure.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Auction_System_Library_Database.Models;
 
 namespace Auction_System_Library_Infrastructure.Interfaces
 {
@@ -13,7 +14,7 @@ namespace Auction_System_Library_Infrastructure.Interfaces
         Task<IEnumerable<Auction>> GetActiveAuctionsAsync();
         Task<IEnumerable<Auction>> GetLiveAuctionsByProductAsync(int productId);
         Task<Auction?> GetAuctionByIdAsync(int id);
-        Task<int> CreateAuctionsAsync(Auction auction);
+        Task<string> CreateAuctionWithAttributesAsync(int productId, int sellerId, DateTime startDate, DateTime endDate, decimal startPrice, List<AddAuctionProductAttributesDTO> attributes);
         Task<string> UpdateAuctionAsync(int id, Auction updatedAuction);
         Task<string> DeleteAuctionAsync(int id);
         Task<IEnumerable<Auction>> GetAuctionsBySellerAsync(int sellerId);
