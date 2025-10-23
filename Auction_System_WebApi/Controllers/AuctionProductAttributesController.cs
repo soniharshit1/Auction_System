@@ -36,24 +36,23 @@ namespace Auction_System_WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostAuctionProductAttribute(int auctionId, List<KeyValuePair<int, string>> attributeValuesList)
-        {
-            var saveResult = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId,attributeValuesList);
-            return Ok(saveResult);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> PostAuctionProductAttribute(int auctionId, List<KeyValuePair<int, string>> attributeValuesList)
+        //{
+        //    var saveResult = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId,attributeValuesList);
+        //    return Ok(saveResult);
+        //}
 
-        // DELETE: api/AuctionProductAttributes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAuctionProductAttribute(int id)
-        {
-            var result = await _auctionProductAttributeRepository.DeleteAsync(id);
-            if(result == "Attribute not found or has been deleted.")
-            {
-                return NotFound(result);
-            }
-            return Ok(result);
-        }
-
+        //// DELETE: api/AuctionProductAttributes/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteAuctionProductAttribute(int id)
+        //{
+        //    var result = await _auctionProductAttributeRepository.DeleteAsync(id);
+        //    if(result == "Attribute not found or has been deleted.")
+        //    {
+        //        return NotFound(result);
+        //    }
+        //    return Ok(result);
+        //}
     }
 }

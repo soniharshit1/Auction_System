@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Auction_System_Library_Infrastructure.DTOs
+﻿namespace Auction_System_Library_Infrastructure.DTOs
 {
     public class AddAuctionProductAttributesDTO
     {
-        public string AttributeValue { get; set; } = null!;
+        public int AttributeId { get; set; }
+        public string AttributeValue { get; set; } = string.Empty;
     }
 }
