@@ -21,6 +21,12 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
+        {
+            return await _context.Products
+                                 .Where(p => p.CategoryId == categoryId)
+                                 .ToListAsync();
+        }
         public async Task<Product?> GetProductByIdAsync(int? id)
         {
            return await FindProductWithId(id);

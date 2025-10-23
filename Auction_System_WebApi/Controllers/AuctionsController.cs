@@ -2,6 +2,7 @@
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,12 @@ namespace Auction_System_WebApi.Controllers
     public class AuctionsController : ControllerBase
     {
         private readonly IAuctionRepository _auctionRepository;
+        private readonly IApprovalsRepository _approvalRepository;
 
-        public AuctionsController(IAuctionRepository auctionRepository)
+        public AuctionsController(IAuctionRepository auctionRepository,IApprovalsRepository approvalsRepository)
         {
             _auctionRepository = auctionRepository;
+            _approvalRepository = approvalsRepository;
         }
 
 
@@ -39,6 +42,18 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
+        [HttpGet("LiveByProduct")]
+        public async Task<ActionResult<IEnumerable<Auction>>> GetLiveAuctionsByProduct([FromQuery] LiveProductAuctionDTO dto)
+        {
+            var auctions = await _auctionRepository.GetLiveAuctionsByProductAsync(dto.ProductId);
+
+            if (auctions == null || !auctions.Any())
+                return NotFound("No live auctions found for the specified product.");
+
+            return Ok(auctions);
+        }
+
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AuctionDTO>> GetAuctionById(int id)
@@ -51,8 +66,10 @@ namespace Auction_System_WebApi.Controllers
             var dto = new AuctionDTO
             {
                 AuctionId = auction.AuctionId,
+                ProductId = auction.ProductId,
                 ProductName = auction.Product?.ProductName,
                 SellerName = auction.Seller?.Name,
+                SellerId = auction.SellerId,
                 StartPrice = auction.StartPrice,
                 StartDate = auction.StartDate,
                 EndDate = auction.EndDate
@@ -78,7 +95,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-        
+
         [HttpPost]
         public async Task<ActionResult<string>> CreateAuction([FromBody] AuctionCreateDTO auctionDto)
         {
@@ -89,15 +106,28 @@ namespace Auction_System_WebApi.Controllers
                 StartPrice = auctionDto.StartPrice,
                 StartDate = auctionDto.StartDate,
                 EndDate = auctionDto.EndDate,
-                Status = true
+                Status = false
             };
 
-            var response = await _auctionRepository.CreateAuctionsAsync(auction);
+            var auctionId = await _auctionRepository.CreateAuctionsAsync(auction);
+            // now fill in the details for auction 
+            /*
+             start price
+            start date
+            end date
+            general product attributes values
+            general product images
+             */
+            var response = "something";
+            if (auctionId > 0)
+            {
+                response = await _approvalRepository.AddApprovalAsync(auction);
+            }
 
             return Ok(response);
         }
 
-        
+
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> UpdateAuction(int id, [FromBody] AuctionUpdateDTO auctionDto)
         {

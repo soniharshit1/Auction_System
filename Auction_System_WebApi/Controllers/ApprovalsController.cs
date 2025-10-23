@@ -28,15 +28,15 @@ namespace Auction_System_WebApi.Controllers
             return Ok(await _ApprovalRepository.GetAllPendingApprovalAsync());
 
         }
-        [HttpPut("ApprovalDirect/{id}")]
-        public async Task<IActionResult> ApproveExistingApproval(int id)
-        {
-            var result = await _ApprovalRepository.AddApprovalAsync(id);
-            if (result == null)
-                return NotFound("Approval record not found");
+        //[HttpPut("ApprovalDirect/{id}")]
+        //public async Task<IActionResult> ApproveExistingApproval(int id)
+        //{
+        //    var result = await _ApprovalRepository.AddApprovalAsync(id);
+        //    if (result == null)
+        //        return NotFound("Approval record not found");
 
-            return Ok(new { message = "Approval updated successfully.", result });
-        }
+        //    return Ok(new { message = "Approval updated successfully.", result });
+        //}
         [HttpPut]
         [Route("Approve/{id}")]
         public async Task<IActionResult> UpdateApprovalStatusAsync(int id, ApprovalDTO approvalDto)

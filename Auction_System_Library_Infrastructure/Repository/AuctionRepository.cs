@@ -33,6 +33,15 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .Where(a => a.Status == true && a.EndDate > DateTime.Now)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Auction>> GetLiveAuctionsByProductAsync(int productId)
+        {
+            return await _context.Auctions
+                .Where(a => a.Status == true && a.EndDate > DateTime.Now && a.ProductId == productId)
+                .ToListAsync();
+        }
+
+
+
         public async Task<Auction?> GetAuctionByIdAsync(int id)
         {
             return await _context.Auctions
@@ -41,24 +50,22 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .FirstOrDefaultAsync(a => a.AuctionId == id);
         }
 
-        public async Task<string> CreateAuctionsAsync(Auction auction)
+        public async Task<int> CreateAuctionsAsync(Auction auction)
         {
             _context.Auctions.Add(auction);
             await _context.SaveChangesAsync();
 
-            var seller = await _context.People.FindAsync(auction.SellerId);
-            if (seller != null)
-            {
-                await _emailService.SendSimpleEmailAsync(
-                    seller.Email,
-                    "Auction Created",
-                    $"Hi {seller.Name}, your auction for product ID {auction.ProductId} has been successfully created."
-                    );
-            }
+            //var seller = await _context.People.FindAsync(auction.SellerId);
+            //if (seller != null)
+            //{
+            //    await _emailService.SendSimpleEmailAsync(
+            //        seller.Email,
+            //        "Auction Created",
+            //        $"Hi {seller.Name}, your auction for product ID {auction.ProductId} has been successfully created."
+            //        );
+            //}
 
-            return $"Auction for product {auction.ProductId} created successfully.";
-
-
+            return auction.AuctionId;
         }
 
 

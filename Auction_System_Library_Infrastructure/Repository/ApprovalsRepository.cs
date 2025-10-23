@@ -26,16 +26,27 @@ namespace Auction_System_Library_Infrastructure.Repository
             return pendingApproval; 
 
         }
-        public async Task<Approval?> AddApprovalAsync(int id)
+        public async Task<string> AddApprovalAsync(Auction incommingAuction)
         {
-            var approval = await _context.Approvals.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.ApprovalId == id);
-            if (approval == null) return null;
+            var auction = await _context.Auctions.Where(auction => auction.IsDeleted == false && auction.AuctionId == incommingAuction.AuctionId).FirstOrDefaultAsync();
+            if (auction == null) return "Auction not found";
 
-            approval.Status = true;
-            approval.ApprovalDate = DateTime.Now;
+            var approval = new Approval
+            {
+                AuctionId = incommingAuction.AuctionId,
+                ProductId = auction.ProductId,
+                Status = false,
+                ApprovalDate = DateTime.Now,
+                Remarks = "pending",
+                AgentId = 6,
+                IsDeleted = false
+            };
 
+            await _context.Approvals.AddAsync(approval);
             await _context.SaveChangesAsync();
-            return approval;
+
+
+            return "Auction sent for approval";
         }
         public async Task<Approval?> UpdateApprovalStatusAsync(int id, ApprovalDTO approvalDto)
         {

@@ -11,7 +11,7 @@ namespace Auction_System_Library_Infrastructure.Interfaces
     public interface IApprovalsRepository
     {
         Task<IEnumerable<Approval>> GetAllPendingApprovalAsync();
-        Task<Approval?> AddApprovalAsync(int id);
+        Task<string> AddApprovalAsync(Auction auction);
         Task<Approval?> UpdateApprovalStatusAsync(int id, ApprovalDTO approvalDto);
         Task<Approval?> RejectApprovalAsync(int id, string remark);
     }
