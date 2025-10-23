@@ -14,8 +14,7 @@ namespace Auction_System_Library_Infrastructure.Interfaces
         Task<string> DeleteGeneralProductAttribute(int generalProductAttributeId);
         Task<string> AddGeneralProductAttribute(GeneralProductAttributeDTO generalProductAttributeDTO, int productId);
         Task<string> UpdateGeneralProductAttribute(int generalProductAttributeId,GeneralProductAttributeDTO generalProductAttributeDTO);
-        Task<IEnumerable<GeneralProductAttribute>> GetAttributesByProductId(int productId);
         Task<string> RemoveAttributeFromProduct(int productId, int generalProductAttributeId);
-
+        Task<IEnumerable<AuctionProductAttributeNamesDTO>> GetAttributesByProductId(int productId);
     }
 }

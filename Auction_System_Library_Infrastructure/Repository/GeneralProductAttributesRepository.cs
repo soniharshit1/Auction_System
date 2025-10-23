@@ -50,11 +50,24 @@ namespace Auction_System_Library_Infrastructure.Repository
             return $"Attribute with id: {generalProductAttributeId} is deleted successfully";
         }
 
-        public async Task<IEnumerable<GeneralProductAttribute>> GetAttributesByProductId(int productId)
+        public async Task<IEnumerable<AuctionProductAttributeNamesDTO>> GetAttributesByProductId(int productId)
         {
-            return await _context.GeneralProductAttributes
+            var gpa = await _context.GeneralProductAttributes
                 .Where(gp => gp.IsDeleted == false && gp.ProductId == productId)
                 .ToListAsync();
+
+            if (gpa == null || !gpa.Any())
+            {
+                return Enumerable.Empty<AuctionProductAttributeNamesDTO>();
+            }
+
+            var names = gpa.Select(attribute => new AuctionProductAttributeNamesDTO
+            {
+                AttributeId = attribute.AttributeId,
+                AttributeName = attribute.AttributeName
+            }).ToList();
+
+            return names;
         }
 
         public async Task<GeneralProductAttribute?> GetGeneralProductAttributeById(int generalProductAttributeId)

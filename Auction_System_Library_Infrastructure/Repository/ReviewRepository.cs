@@ -80,5 +80,30 @@ namespace Auction_System_Library_Infrastructure.Repository
             await _context.SaveChangesAsync();
             return review;
         }
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsForTargetUserAsync(int targetUserId)
+        {
+            var reviews = await _context.Reviews
+                // Filter: where the TargetUserID column matches the requested personId
+                .Where(r => r.TargetUserId == targetUserId)
+                // Filter: exclude soft-deleted reviews
+                .Where(r => r.IsDeleted == false)
+                // Eagerly load the Reviewer's (User's) information to get their name
+                .Include(r => r.User)
+                // Project the results into the clean ReviewDTO structure
+                .Select(r => new ReviewDTO
+                {
+                    ReviewId = r.ReviewId,
+                    Rating = r.Rating,
+                    UserId = r.UserId,
+                    Comment = r.Comment,
+                    Date = r.Date,
+                    ReviewerName = r.User.Name
+
+                })
+                .OrderByDescending(r => r.Date) // Sort by most recent review
+                .ToListAsync();
+
+            return reviews;
+        }
     }
 }

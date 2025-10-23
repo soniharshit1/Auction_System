@@ -53,15 +53,15 @@ namespace Auction_System_Library_Infrastructure.Repository
             await _context.SaveChangesAsync();
             
 
-            var buyer = await _context.People.FindAsync(bid.BuyerId);
-            if (buyer != null)
-            {
-                await _emailService.SendSimpleEmailAsync(
-                    buyer.Email,
-                    "Bid Placed",
-                    $"Hi {buyer.Name}, your bid of {bid.Amount} on auction ID {bid.AuctionId} has been successfully placed."
-                );
-            }
+            //var buyer = await _context.People.FindAsync(bid.BuyerId);
+            //if (buyer != null)
+            //{
+            //    await _emailService.SendSimpleEmailAsync(
+            //        buyer.Email,
+            //        "Bid Placed",
+            //        $"Hi {buyer.Name}, your bid of {bid.Amount} on auction ID {bid.AuctionId} has been successfully placed."
+            //    );
+            //}
             return $"Bid of {bid.Amount} placed successfully.";
 
 

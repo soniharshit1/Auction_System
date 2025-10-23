@@ -20,7 +20,7 @@ namespace Auction_System_WebApi.Controllers
         private readonly IAuctionRepository _auctionRepository;
         private readonly IApprovalsRepository _approvalRepository;
 
-        public AuctionsController(IAuctionRepository auctionRepository, IApprovalsRepository approvalsRepository)
+        public AuctionsController(IAuctionRepository auctionRepository,IApprovalsRepository approvalsRepository)
         {
             _auctionRepository = auctionRepository;
             _approvalRepository = approvalsRepository;
@@ -66,8 +66,10 @@ namespace Auction_System_WebApi.Controllers
             var dto = new AuctionDTO
             {
                 AuctionId = auction.AuctionId,
+                ProductId = auction.ProductId,
                 ProductName = auction.Product?.ProductName,
                 SellerName = auction.Seller?.Name,
+                SellerId = auction.SellerId,
                 StartPrice = auction.StartPrice,
                 StartDate = auction.StartDate,
                 EndDate = auction.EndDate
@@ -97,24 +99,27 @@ namespace Auction_System_WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> CreateAuction([FromBody] AuctionCreateDTO auctionDto)
         {
-            var auction = new Auction()
+            var attributes = auctionDto.Attributes.Select(attr => new AddAuctionProductAttributesDTO
             {
-                ProductId = auctionDto.ProductId,
-                SellerId = auctionDto.SellerId,
-                StartPrice = auctionDto.StartPrice,
-                StartDate = auctionDto.StartDate,
-                EndDate = auctionDto.EndDate,
-                Status = false
-            };
+                AttributeId = attr.AttributeId,
+                AttributeValue = attr.AttributeValue
+            }).ToList();
 
-            var auctionId = await _auctionRepository.CreateAuctionsAsync(auction);
-            var response = "something";
-            if (auctionId > 0)
+            var result = await _auctionRepository.CreateAuctionWithAttributesAsync(
+                auctionDto.ProductId,
+                auctionDto.SellerId,
+                auctionDto.StartDate,
+                auctionDto.EndDate,
+                auctionDto.StartPrice,
+                attributes
+            );
+
+            if (result.Contains("Auction ID"))
             {
-                response = await _approvalRepository.AddApprovalAsync(auctionId);
+                return Ok(result);
             }
 
-            return Ok(response);
+            return BadRequest(result);
         }
 
 

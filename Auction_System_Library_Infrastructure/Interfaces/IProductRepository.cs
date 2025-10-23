@@ -10,6 +10,8 @@ namespace Auction_System_Library_Infrastructure.Interfaces
     public interface IProductRepository
     {
         Task<IEnumerable<Product>> GetProductsAsync();
+        
+        Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId);
 
         Task<Product?> GetProductByIdAsync(int? id);
 

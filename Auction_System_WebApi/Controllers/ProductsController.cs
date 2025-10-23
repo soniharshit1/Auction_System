@@ -17,6 +17,14 @@ namespace Auction_System_WebApi.Controllers
         {
             return Ok(await _productRepository.GetProductsAsync());
         }
+        // GET: api/Products/ByCategory/5
+        [HttpGet("ByCategory/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCategory(int categoryId)
+        {
+            var products = await _productRepository.GetProductsByCategoryAsync(categoryId);
+            return Ok(products);
+        }
+
 
         // GET: api/Products/id
         [HttpGet("{id}")]
