@@ -16,15 +16,18 @@ namespace Auction_System_WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             // Add services to the container.
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowLocalhost",
-                    builder => builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
             });
+
+            
+
             builder.Services.AddControllers()
                  .AddJsonOptions(options =>
                  {
@@ -104,6 +107,8 @@ namespace Auction_System_WebApi
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddScoped<IApprovalsRepository, ApprovalsRepository>();
             builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+            builder.Services.AddScoped<IAuctionProductImagesRepository, AuctionProductImagesRepository>();
+            
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -115,10 +120,11 @@ namespace Auction_System_WebApi
                 });
             }
             app.UseHttpsRedirection();
-            app.UseCors("AllowLocalhost");
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+
             app.Run();
         }
     }

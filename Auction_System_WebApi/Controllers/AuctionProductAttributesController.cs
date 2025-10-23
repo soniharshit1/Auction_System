@@ -36,16 +36,20 @@ namespace Auction_System_WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<AuctionProductAttribute>> PostAuctionProductAttribute([FromQuery]int auctionId,[FromQuery]int attributeId, [FromQuery]string attributeValue)
+        [HttpPost("auction-product-attribute")]
+        public async Task<ActionResult<string>> PostAuctionProductAttribute([FromQuery] int productId,[FromQuery] int attributeId,[FromQuery] string attributeValue)
         {
-            var result = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId, attributeId, attributeValue);
-            if(result == "Auction not found.")
+            var result = await _auctionProductAttributeRepository.SaveAttributesAsync(productId, attributeId, attributeValue);
+
+            return result switch
             {
-                return NotFound(result);
-            }
-            return Ok(result);
+                "Product not found." => NotFound(result),
+                "No general product attribute found" => BadRequest(result),
+                "Attributes saved successfully." => Ok(result),
+                _ => StatusCode(500, "Unexpected error occurred.")
+            };
         }
+
 
         // DELETE: api/AuctionProductAttributes/5
         [HttpDelete("{id}")]

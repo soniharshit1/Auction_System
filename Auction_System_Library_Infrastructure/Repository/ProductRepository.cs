@@ -54,7 +54,8 @@ namespace Auction_System_Library_Infrastructure.Repository
             var product = await FindProductWithId(id);
             if (product != null)
             {
-                _context.Products.Remove(product);
+                product.IsDeleted = true;
+                _context.Products.Update(product);
                 await _context.SaveChangesAsync();
                 return $"Product with productId: {id} is deleted successfully";
             }
