@@ -12,6 +12,5 @@ namespace Auction_System_Library_Infrastructure.Interfaces
     {
         Task<List<AuctionProductAttributesDTO>> GetAttributesForAuctionAsync(int productId, int auctionId);
         Task<string> DeleteAsync(int id);
-        Task<string> SaveAttributesAsync(int auctionId, List<KeyValuePair<int, string>> attributeValuesList);
     }
 }

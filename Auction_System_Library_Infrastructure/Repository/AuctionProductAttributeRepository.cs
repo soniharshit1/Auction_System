@@ -64,21 +64,5 @@ namespace Auction_System_Library_Infrastructure.Repository
 
             return result;
         }
-
-
-        public async Task<string> SaveAttributesAsync(int auctionId, List<KeyValuePair<int, string>> attributeValuesList)
-        {
-            var attributes = attributeValuesList.Select(av => new AuctionProductAttribute
-            {
-                AuctionId = auctionId,
-                AttributeId = av.Key,
-                AttributeValue = av.Value
-            }).ToList();
-
-            await _context.AuctionProductAttributes.AddRangeAsync(attributes);
-            await _context.SaveChangesAsync();
-
-            return "Attributes saved successfully.";
-        }
     }
 }
