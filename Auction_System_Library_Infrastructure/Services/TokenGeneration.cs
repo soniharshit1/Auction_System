@@ -42,7 +42,7 @@ namespace Auction_System_Library_Infrastructure.Services
                   issuer: "jyothika.com",
                   audience: "Training",
                   claims: claims,
-                  expires: DateTime.Now.AddHours(1),
+                  expires: DateTime.Now.AddHours(2),
                   signingCredentials: securityCredentials
                 );
             var tokenS = new JwtSecurityTokenHandler();

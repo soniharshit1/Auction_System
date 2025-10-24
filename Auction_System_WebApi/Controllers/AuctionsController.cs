@@ -2,7 +2,7 @@
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
-using Auction_System_Library_Infrastucture.DTOs;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +15,16 @@ namespace Auction_System_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuctionsController(IAuctionRepository auctionRepository) : ControllerBase
+    public class AuctionsController : ControllerBase
     {
-        private readonly IAuctionRepository _auctionRepository = auctionRepository;
+        private readonly IAuctionRepository _auctionRepository;
 
-        
+        public AuctionsController(IAuctionRepository auctionRepository)
+        {
+            _auctionRepository = auctionRepository;
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAllAuctions()
         {
@@ -27,13 +32,25 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-        
+
         [HttpGet("Active")]
         public async Task<ActionResult<IEnumerable<Auction>>> GetActiveAuctions()
         {
             var auctions = await _auctionRepository.GetActiveAuctionsAsync();
             return Ok(auctions);
         }
+
+        [HttpGet("LiveByProduct")]
+        public async Task<ActionResult<IEnumerable<Auction>>> GetLiveAuctionsByProduct([FromQuery] LiveProductAuctionDTO dto)
+        {
+            var auctions = await _auctionRepository.GetLiveAuctionsByProductAsync(dto.ProductId);
+
+            if (auctions == null || !auctions.Any())
+                return NotFound("No live auctions found for the specified product.");
+
+            return Ok(auctions);
+        }
+
 
 
         [HttpGet("{id}")]
@@ -47,8 +64,10 @@ namespace Auction_System_WebApi.Controllers
             var dto = new AuctionDTO
             {
                 AuctionId = auction.AuctionId,
+                ProductId = auction.ProductId,
                 ProductName = auction.Product?.ProductName,
                 SellerName = auction.Seller?.Name,
+                SellerId = auction.SellerId,
                 StartPrice = auction.StartPrice,
                 StartDate = auction.StartDate,
                 EndDate = auction.EndDate
@@ -58,7 +77,6 @@ namespace Auction_System_WebApi.Controllers
         }
 
 
-
         [HttpGet("Seller/{sellerId}")]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAuctionsBySeller(int sellerId)
         {
@@ -66,7 +84,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-        
+
         [HttpGet("Product/{productId}")]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAuctionsByProduct(int productId)
         {
@@ -74,7 +92,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-        
+
         [HttpPost]
         public async Task<ActionResult<string>> CreateAuction([FromBody] AuctionCreateDTO auctionDto)
         {
@@ -89,10 +107,11 @@ namespace Auction_System_WebApi.Controllers
             };
 
             var response = await _auctionRepository.CreateAuctionsAsync(auction);
+
             return Ok(response);
         }
 
-        
+
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> UpdateAuction(int id, [FromBody] AuctionUpdateDTO auctionDto)
         {
@@ -112,19 +131,38 @@ namespace Auction_System_WebApi.Controllers
             return Ok(response);
         }
 
-        
+
+        //[HttpPatch("{id}/Close")]
+        //public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
+        //{
+        //    var response = await _auctionRepository.CloseAuctionAsync(id, closeDto.FinalBid);
+        //    if (response == "Auction not found")
+        //    {
+        //        return NotFound(response);
+        //    }
+        //    return Ok(response);
+        //}
+
+        // Auction_System_WebApi.Controllers/AuctionsController.cs
+
+        // ... existing code ...
+
         [HttpPatch("{id}/Close")]
         public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
         {
+            // Call repository method. This creates the Transaction with PaymentStatus=0.
             var response = await _auctionRepository.CloseAuctionAsync(id, closeDto.FinalBid);
-            if (response == "Auction not found")
+
+            if (response.Contains("Auction not found"))
             {
                 return NotFound(response);
             }
+
+            // Return the response, which tells the admin the transaction is pending (0)
             return Ok(response);
         }
 
-        
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteAuction(int id)
         {

@@ -20,5 +20,7 @@ namespace Auction_System_Library_Infrastructure.DTOs
 
         public int SellerId { get; set; }
 
+      
+
     }
 }

@@ -32,6 +32,10 @@ namespace Auction_System_WebApi
                  .AddJsonOptions(options =>
                  {
                      options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                     // This setting tells the serializer to ignore object cycles, 
+                     // which prevents the StackOverflowException (500 error).
+                     //for removal of 500 cycles error in Getting all auctions details - public async Task<ActionResult<IEnumerable<Auction>>> GetAllAuctions()
+                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                  });
  
             builder.Services.AddEndpointsApiExplorer();
@@ -51,9 +55,12 @@ namespace Auction_System_WebApi
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                        ValidateIssuer = true,
+                        ValidIssuer = "jyothika.com",
+                        ValidAudience = "Training",
+                        ValidateAudience = true
+                     
                     };
                     x.Events = new JwtBearerEvents
                     {
@@ -112,6 +119,7 @@ namespace Auction_System_WebApi
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddScoped<IApprovalsRepository, ApprovalsRepository>();
             builder.Services.AddScoped<ITransactionsRepository, TransactionsRepository>();
+            builder.Services.AddScoped<IAuctionProductImagesRepository, AuctionProductImagesRepository>();
             var app = builder.Build();
  
             // Configure the HTTP request pipeline.

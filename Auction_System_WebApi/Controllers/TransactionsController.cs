@@ -59,13 +59,35 @@ namespace Auction_System_WebApi.Controllers
             if (update == null) return NotFound();
             return Ok(update);
         }
+
+        // Inside your Controllers/TransactionController.cs
+
+
         [HttpGet("user/{UserId}")]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetUserTransaction(int UserId)
         {
             return Ok(await _TransactionsRepository.GetTransactionByUserAsync(UserId));
         }
+
+        [HttpGet("status/{auctionId}")]
+        public async Task<ActionResult<bool>> GetStatusByAuctionId(int auctionId)
+        {
+            return Ok(await _TransactionsRepository.IsPaymentCompletedAsync(auctionId));
+        }
+
+        // In TransactionsController.cs
+
+        [HttpGet("auction/{auctionId}")]
+        public async Task<ActionResult<Transaction>> GetTransactionByAuctionId(int auctionId)
+        {
+            // You need a new method in ITransactionsRepository to handle this lookup
+            var transaction = await _TransactionsRepository.GetTransactionByAuctionIdAsync(auctionId);
+
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+            return Ok(transaction);
+        }
     }
 }
-
-
-

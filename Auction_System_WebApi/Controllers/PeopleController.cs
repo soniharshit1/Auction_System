@@ -1,8 +1,12 @@
 ﻿using Auction_System_Library_Database.Data;
-using Auction_System_Library_Infrastructure.DTOs;
+using Auction_System_Library_Database.Enums;
 using Auction_System_Library_Database.Models;
+using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
+using Auction_System_Library_Infrastructure.Repository;
 using Humanizer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Auction_System_Library_Database.Enums;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace Auction_System_WebApi.Controllers
@@ -21,11 +23,12 @@ namespace Auction_System_WebApi.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PeopleController(IPersonRepository personRepository) : ControllerBase
+    public class PeopleController(IPersonRepository personRepository,IReviewRepository reviewRepository) : ControllerBase
     {
         private readonly IPersonRepository _personRepository = personRepository;
+        private readonly IReviewRepository _reviewRepository = reviewRepository;
 
-  
+
 
         // GET: api/People
         [HttpGet]
@@ -43,6 +46,51 @@ namespace Auction_System_WebApi.Controllers
             return Ok(await _personRepository.FindPersonbyIdAsync(id));
         }
 
+        /// <summary>
+        /// Retrieves the profile and all reviews received by the authenticated user.
+        /// </summary>
+        /// <returns>A combined PersonProfileDTO object containing person details and reviews.</returns>
+        [HttpGet("Me")]
+        [Authorize]
+        public async Task<ActionResult<PersonProfileDTO>> GetMyProfileWithReviews()
+        {
+            // 1. Get UserId from the JWT token claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int personId))
+            {
+                return Unauthorized(new { message = "Invalid or missing user identifier in token." });
+            }
+
+            // 2. Fetch Person data
+            var person = await _personRepository.FindPersonbyIdAsync(personId);
+
+            if (person == null)
+            {
+                return NotFound(new { message = $"User profile not found for ID: {personId}." });
+            }
+
+            // 3. Fetch Reviews where the authenticated user is the TargetUserId
+            // This is the key step: we fetch reviews where TargetUserId == personId
+            var receivedReviews = await _reviewRepository.GetReviewsForTargetUserAsync(personId);
+
+            // 4. Map and return a combined DTO
+            var profileDto = new PersonProfileDTO
+            {
+                Name = person.Name,
+                Email = person.Email,
+                ContactNumber = person.ContactNumber,
+                Role = person.Role, // Assuming 'person' object has the Role property
+                PersonId = personId,
+
+                // Assign the fetched reviews to the ReceivedReviews property
+                SellerReviews = receivedReviews
+
+               
+            };
+
+            return Ok(profileDto);
+        }
         //// PUT: api/People/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

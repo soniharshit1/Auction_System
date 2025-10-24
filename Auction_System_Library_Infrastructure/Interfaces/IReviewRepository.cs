@@ -15,5 +15,8 @@ namespace Auction_System_Library_Infrastructure.Interfaces
         Task <Review?>AddReviewAsync(CreateReviewDTO dto);
         Task <Review?> UpdateReviewAsync(int id, UpdateReviewDTO dto);
         Task <string?>DeleteReviewAsync(int id);
+
+        Task<IEnumerable<ReviewDTO>> GetReviewsForTargetUserAsync(int targetUserId);
+        Task<Review?> GetByIdAsync(int reviewId);
     }
 }
