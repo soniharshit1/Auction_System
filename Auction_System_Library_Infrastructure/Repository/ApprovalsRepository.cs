@@ -9,9 +9,23 @@ namespace Auction_System_Library_Infrastructure.Repository
     public class ApprovalsRepository : IApprovalsRepository
     {
         private readonly AuctionDbContext _context;
-        public ApprovalsRepository(AuctionDbContext context)
+        private readonly IPersonRepository _personRepository;
+        public ApprovalsRepository(AuctionDbContext context, IPersonRepository personRepository)
         {
             _context = context;
+            _personRepository = personRepository;
+        }
+
+        private int GetRandomAgentId()
+        {
+            var agents = _personRepository.GetAllPersonsAsync().Result
+                .Where(p => p.Role.ToString().ToLower() == "agent" && !p.IsDeleted)
+                .ToList();
+            if (!agents.Any())
+                throw new InvalidOperationException("No agents available");
+            var random = new Random();
+            int index = random.Next(agents.Count);
+            return agents[index].UserId;
         }
 
         private IQueryable<Approval> ActiveApprovals()
@@ -71,7 +85,7 @@ namespace Auction_System_Library_Infrastructure.Repository
                 Status = false,
                 ApprovalDate = DateTime.Now,
                 Remarks = "pending",
-                AgentId = 6,
+                AgentId = GetRandomAgentId(),
                 IsDeleted = false
             };
 

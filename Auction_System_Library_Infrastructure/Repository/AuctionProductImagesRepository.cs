@@ -22,30 +22,6 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .ToListAsync();
         }
 
-        public async Task<string> UploadImage(int auctionId, int productId,int sellerId, TestDto imageFile)
-        {
-            if (imageFile != null && imageFile.File.Length > 0)
-            {
-                using var ms = new MemoryStream();
-                await imageFile.File.CopyToAsync(ms);
-                var imageBytes = ms.ToArray();
-
-                var image = new AuctionProductImage
-                {
-                    ProductId = productId,
-                    AuctionId = auctionId,
-                    SellerId = sellerId,
-                    ProductImages = imageBytes,
-                    IsDeleted = false
-                };
-
-                _context.AuctionProductImages.Add(image);
-                await _context.SaveChangesAsync();
-            }
-
-            return "Image uploaded successfully";
-        }
-
         public async Task<AuctionProductImage?> GetImageById(int id)
         {
             return await _context.AuctionProductImages
