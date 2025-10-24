@@ -15,3 +15,4 @@ namespace Auction_System_Library_Infrastructure.Interfaces
         Task<AuctionProductImage?> GetImageById(int id);
     }
 }
+

@@ -36,7 +36,7 @@ namespace Auction_System_WebApi.Controllers
             };
 
             var response = await _categoryRepository.UpdateCategoryAsync(id, cat);
-            if(response == "Category not found")
+            if (response == "Category not found")
             {
                 return NotFound(response);
             }
@@ -45,7 +45,7 @@ namespace Auction_System_WebApi.Controllers
 
         // POST: api/Categories
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory([FromQuery]CategoryDTO category)
+        public async Task<ActionResult<Category>> PostCategory([FromQuery] CategoryDTO category)
         {
             var cat = new Category()
             {

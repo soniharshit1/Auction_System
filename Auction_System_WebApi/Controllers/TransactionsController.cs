@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Auction_System_WebApi.Controllers
 {
     [Route("api/[controller]")]
@@ -26,6 +28,7 @@ namespace Auction_System_WebApi.Controllers
 
         // GET: api/Transactions
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
             return Ok(await _TransactionsRepository.GetAllTransactionsAsync());
@@ -50,6 +53,7 @@ namespace Auction_System_WebApi.Controllers
         }
         [HttpPut]
         [Route("{Id}")]
+        [Authorize(Roles ="Admin") ]
         public async Task<IActionResult> UpdatePaymentStatusAsync(int Id, [FromBody] TransactionDTO transactionDto)
         {
             if (transactionDto == null) return BadRequest("Transaction Data is required");
@@ -59,13 +63,35 @@ namespace Auction_System_WebApi.Controllers
             if (update == null) return NotFound();
             return Ok(update);
         }
+
+        // Inside your Controllers/TransactionController.cs
+
+
         [HttpGet("user/{UserId}")]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetUserTransaction(int UserId)
         {
             return Ok(await _TransactionsRepository.GetTransactionByUserAsync(UserId));
         }
+
+        [HttpGet("status/{auctionId}")]
+        public async Task<ActionResult<bool>> GetStatusByAuctionId(int auctionId)
+        {
+            return Ok(await _TransactionsRepository.IsPaymentCompletedAsync(auctionId));
+        }
+
+        // In TransactionsController.cs
+
+        [HttpGet("auction/{auctionId}")]
+        public async Task<ActionResult<Transaction>> GetTransactionByAuctionId(int auctionId)
+        {
+            // You need a new method in ITransactionsRepository to handle this lookup
+            var transaction = await _TransactionsRepository.GetTransactionByAuctionIdAsync(auctionId);
+
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+            return Ok(transaction);
+        }
     }
 }
-
-
-

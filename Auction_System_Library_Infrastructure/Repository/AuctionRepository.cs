@@ -18,18 +18,29 @@ namespace Auction_System_Library_Infrastructure.Repository
         private readonly AuctionDbContext _context;
         private readonly IEmailService _emailService;
         private readonly IApprovalsRepository _approvalsRepository;
+        private readonly ITransactionsRepository _transactionsRepository; // New Dependency
+        private readonly IBidRepository _bidRepository;
 
-        public AuctionRepository(AuctionDbContext context, IEmailService emailService, IApprovalsRepository approvalsRepository)
+        public AuctionRepository(AuctionDbContext context, IEmailService emailService, IApprovalsRepository approvalsRepository, ITransactionsRepository transactionsRepository, IBidRepository bidRepository)
         {
             _context = context;
             _emailService = emailService;
             _approvalsRepository = approvalsRepository;
+            _transactionsRepository = transactionsRepository;
+            _bidRepository = bidRepository;
         }
 
         public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
         {
+            //return await _context.Auctions.ToListAsync();
+            // FIX: Use Include and ThenInclude to load related data
             return await _context.Auctions
-                .Where(a => !a.IsDeleted)
+                // 1. Include the Product entity
+                .Include(a => a.Product)
+                    // 2. Then, include the Category entity nested within the Product
+                    .ThenInclude(p => p.Category)
+                // 3. Optional: Filter out soft-deleted auctions (IsDeleted = false)
+                .Where(a => a.IsDeleted == false)
                 .ToListAsync();
         }
 
@@ -114,10 +125,11 @@ namespace Auction_System_Library_Infrastructure.Repository
             var imgParam = new SqlParameter("@Images", imgTable)
             {
                 SqlDbType = SqlDbType.Structured,
+
                 TypeName = "AuctionImageType"
             };
-            command.Parameters.Add(imgParam);
 
+            command.Parameters.Add(imgParam);
             int auctionId = 0;
 
             using var reader = await command.ExecuteReaderAsync();
@@ -129,10 +141,8 @@ namespace Auction_System_Library_Infrastructure.Repository
 
             await connection.CloseAsync();
             var response = await _approvalsRepository.AddApprovalAsync(auctionId);
-            
             return response;
         }
-
 
         public async Task<string> UpdateAuctionAsync(int id, Auction updatedAuction)
         {
@@ -143,7 +153,6 @@ namespace Auction_System_Library_Infrastructure.Repository
                 existingAuction.StartDate = updatedAuction.StartDate;
                 existingAuction.EndDate = updatedAuction.EndDate;
                 existingAuction.ProductId = updatedAuction.ProductId;
-
                 _context.Auctions.Update(existingAuction);
                 await _context.SaveChangesAsync();
                 return $"Auction {id} updated successfully.";
@@ -178,17 +187,72 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .ToListAsync();
         }
 
-        public async Task<string> CloseAuctionAsync(int id, decimal finalBid)
+        public async Task<string> CloseAuctionAsync(int auctionId, decimal finalBid)
         {
-            var auction = await _context.Auctions.FindAsync(id);
-            if (auction != null && !auction.IsDeleted)
+            var auction = await _context.Auctions.FirstOrDefaultAsync(a => a.AuctionId == auctionId && a.IsDeleted == false);
+
+            if (auction == null)
             {
-                auction.Status = false;
-                auction.FinalBid = finalBid;
-                await _context.SaveChangesAsync();
-                return $"Auction {id} closed with final bid {finalBid}.";
+                return "Auction not found";
             }
-            return "Auction not found.";
+
+            if (auction.Status == false)
+            {
+                return "Auction is already closed and cannot be re-opened.";
+            }
+
+            // 1. Get the Highest Bid (Winner)
+            var highestBid = await _bidRepository.GetHighestBidAsync(auctionId);
+
+            // Determine values for the transaction
+            int? buyerId = highestBid?.BuyerId;
+            decimal transactionAmount = highestBid != null ? highestBid.Amount : finalBid;
+            int sellerId = auction.SellerId; // The seller ID from the auction
+
+            // 2. Permanently Close the Auction
+            auction.Status = false;
+            auction.FinalBid = transactionAmount;
+            _context.Auctions.Update(auction);
+
+            // 3. Create Transaction with PaymentStatus = 0 (false)
+            if (buyerId.HasValue && transactionAmount > 0)
+            {
+                // Check if a transaction already exists for this auction (prevents duplicates)
+                var existingTransaction = await _transactionsRepository.GetTransactionByAuctionIdAsync(auctionId);
+                if (existingTransaction != null)
+                {
+                    // If transaction exists, just save auction changes and exit.
+                    await _context.SaveChangesAsync();
+                    return "Auction closed. Transaction already exists.";
+                }
+
+                var transactionDto = new TransactionDTO
+                {
+                    AuctionId = auction.AuctionId,
+                    BuyerId = buyerId.Value,
+                    SellerId = sellerId,
+                    Amount = transactionAmount,
+
+                    // INITIAL STATE: PaymentStatus = 0 (false) and PaymentDate = null
+                    PaymentStatus = false,
+                    PaymentDate = null,
+
+                    //TransactionDate = DateTime.UtcNow,
+                };
+
+                // This method should handle saving the new transaction to the database
+                await _transactionsRepository.AddTransactionAsync(transactionDto);
+            }
+            // If no winner/bid and FinalBid is 0, no transaction is created.
+
+            await _context.SaveChangesAsync();
+
+            // Check if a transaction was actually created
+            if (buyerId.HasValue && transactionAmount > 0)
+            {
+                return "Auction closed and **Pending** transaction recorded (PaymentStatus=0).";
+            }
+            return "Auction closed, no winning bid found to create a transaction.";
         }
     }
 }

@@ -79,7 +79,6 @@ namespace Auction_System_WebApi.Controllers
         }
 
 
-
         [HttpGet("Seller/{sellerId}")]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAuctionsBySeller(int sellerId)
         {
@@ -94,7 +93,6 @@ namespace Auction_System_WebApi.Controllers
             var auctions = await _auctionRepository.GetAuctionsByProductAsync(productId);
             return Ok(auctions);
         }
-
 
         [HttpPost]
         public async Task<ActionResult<string>> CreateAuction([FromForm] AuctionCreateDTO auctionDto, [FromForm] IFormFileCollection images)
@@ -120,8 +118,6 @@ namespace Auction_System_WebApi.Controllers
             return Ok(result);
         }
 
-
-
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> UpdateAuction(int id, [FromBody] AuctionUpdateDTO auctionDto)
         {
@@ -141,18 +137,20 @@ namespace Auction_System_WebApi.Controllers
             return Ok(response);
         }
 
-
         [HttpPatch("{id}/Close")]
         public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
         {
+            // Call repository method. This creates the Transaction with PaymentStatus=0.
             var response = await _auctionRepository.CloseAuctionAsync(id, closeDto.FinalBid);
-            if (response == "Auction not found")
+
+            if (response.Contains("Auction not found"))
             {
                 return NotFound(response);
             }
+
+            // Return the response, which tells the admin the transaction is pending (0)
             return Ok(response);
         }
-
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteAuction(int id)

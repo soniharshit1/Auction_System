@@ -12,9 +12,9 @@ public partial class Person
 
     public string Email { get; set; } = null!;
 
-    public string PasswordHash { get; set; } = null!;
+    public string? PasswordHash { get; set; }
 
-    public Role Role { get; set; }
+    public Role Role { get; set; } 
 
     public string? ContactNumber { get; set; }
 

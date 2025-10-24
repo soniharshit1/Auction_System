@@ -54,24 +54,88 @@ namespace Auction_System_Library_Infrastructure.Repository
             return transaction;
 
         }
-        public async Task<Transaction?> UpdatePaymentStatusAsync(int Id, TransactionDTO transactionDto)
-        {
-            var transaction = await _context.Transactions.FirstOrDefaultAsync(p => p.TransactionId == Id && p.IsDeleted == false);
+        //public async Task<Transaction?> UpdatePaymentStatusAsync(int Id, TransactionDTO transactionDto)
+        //{
+        //    var transaction = await _context.Transactions.FirstOrDefaultAsync(p => p.TransactionId == Id && p.IsDeleted == false);
 
-            if (transaction == null) return null;
+        //    if (transaction == null) return null;
 
-            transaction.PaymentStatus = transactionDto.PaymentStatus;
+        //    transaction.PaymentStatus = transactionDto.PaymentStatus;
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            return transaction;
+        //    return transaction;
 
-        }
+        //}
+
+        // Auction_System_Library_Infrastructure.Repository/TransactionsRepository.cs
+
+public async Task<Transaction?> UpdatePaymentStatusAsync(int Id, TransactionDTO transactionDto)
+{
+    var transaction = await _context.Transactions.FirstOrDefaultAsync(p => p.TransactionId == Id && p.IsDeleted == false);
+
+    if (transaction == null) return null;
+
+    // 1. Update the Payment Status
+    transaction.PaymentStatus = transactionDto.PaymentStatus;
+
+    // 2. CRITICAL CHANGE: Set PaymentDate if the status is being set to TRUE (Paid/1)
+    if (transactionDto.PaymentStatus == true)
+    {
+        // Set PaymentDate to now when the admin confirms payment
+        transaction.PaymentDate = DateTime.UtcNow; 
+    }
+    else if (transactionDto.PaymentStatus == false)
+    {
+        // If status is set back to false (e.g., pending/0), clear the payment date
+        transaction.PaymentDate = null; 
+    }
+
+    _context.Transactions.Update(transaction); // Explicit update (optional but safe)
+
+    await _context.SaveChangesAsync();
+
+    return transaction;
+
+}
+
+       
         public async Task<IEnumerable<Transaction>> GetTransactionByUserAsync(int UserId)
         {
-          var transaction = await _context.Transactions
-               .Where(p => !p.IsDeleted && (p.BuyerId == UserId || p.SellerId == UserId))
-               .ToListAsync();
+            var transaction = await _context.Transactions
+                 .Where(p => !p.IsDeleted && (p.BuyerId == UserId || p.SellerId == UserId))
+                 .ToListAsync();
+
+            return transaction;
+        }
+
+        public async Task<bool> IsPaymentCompletedAsync(int auctionId)
+        {
+            // Step 1: Search for the transaction with the given auctionId that is not deleted
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(t => !t.IsDeleted && t.AuctionId == auctionId);
+
+            // Step 2: If no transaction is found, return false
+            if (transaction == null)
+            {
+                return false;
+            }
+
+            // Step 3: Check if the payment status is completed (1)
+            return transaction.PaymentStatus == true;
+        }
+
+        // Inside your Repositories/TransactionsRepository.cs
+
+        public async Task<Transaction?> GetTransactionByAuctionIdAsync(int auctionId)
+        {
+            // Use FindAsync or FirstOrDefaultAsync based on what is indexed.
+            // Since AuctionId is likely not the primary key (TransactionId is), 
+            // we use FirstOrDefaultAsync.
+
+            var transaction = await _context.Transactions
+                .Where(t => t.AuctionId == auctionId)
+                .FirstOrDefaultAsync();
 
             return transaction;
         }

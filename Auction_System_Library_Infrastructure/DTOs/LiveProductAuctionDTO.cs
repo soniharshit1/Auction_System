@@ -8,6 +8,8 @@ namespace Auction_System_Library_Infrastructure.DTOs
 {
     public class LiveProductAuctionDTO
     {
+
         public int ProductId { get; set; }
+
     }
 }

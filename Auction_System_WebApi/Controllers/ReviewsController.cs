@@ -73,7 +73,7 @@ namespace Auction_System_WebApi.Controllers
 
         // DELETE api/reviews/10
         [HttpDelete("{id:int}")]
-        [Authorize(Roles ="Admin")]
+        [Authorize]
         public async Task<IActionResult> DeleteReview(int id)
         {
             var r = await _reviewRepository.DeleteReviewAsync(id);
@@ -82,6 +82,17 @@ namespace Auction_System_WebApi.Controllers
                 return NotFound("There is no review to delete");
             }
             return Ok("Review deleted successfully.");
+        }
+
+        //for editing review 
+        [HttpGet("{reviewId:int}")] // Example of a clean, RESTful route for a single resource
+        public async Task<IActionResult> GetByReviewId(int reviewId)
+        {
+            var review = await _reviewRepository.GetByIdAsync(reviewId); // Assuming GetByIdAsync exists
+            if (review == null)
+                return NotFound($"Review with ID {reviewId} not found.");
+
+            return Ok(review); // Returns a single Review object
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Auction_System_Library_Infrastructure.Repository
         public async Task<string> DeleteCategoryAsync(int id)
         {
             var category = await FindCategoryWithId(id);
-            if (category != null) 
+            if (category != null)
             {
                 category.IsActive = false;
                 _context.Categories.Update(category);
@@ -50,7 +50,7 @@ namespace Auction_System_Library_Infrastructure.Repository
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync(Role role)
         {
-            if(role == Role.Admin)
+            if (role == Role.Admin)
             {
                 return await _context.Categories.ToListAsync();
             }
@@ -80,7 +80,7 @@ namespace Auction_System_Library_Infrastructure.Repository
 
         private async Task<Category?> FindCategoryWithId(int id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(c=>c.CategoryId == id);
+            return await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         }
     }
 }
