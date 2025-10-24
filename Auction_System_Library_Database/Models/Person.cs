@@ -14,7 +14,7 @@ public partial class Person
 
     public string? PasswordHash { get; set; }
 
-    public string Role { get; set; } = null!;
+    public Role Role { get; set; } 
 
     public string? ContactNumber { get; set; }
 
