@@ -51,9 +51,17 @@ namespace Auction_System_Library_Infrastructure.Repository
 
             _context.Bids.Add(bid);
             await _context.SaveChangesAsync();
+
+            //var buyer = await _context.People.FindAsync(bid.BuyerId);
+            //if (buyer != null)
+            //{
+            //    await _emailService.SendSimpleEmailAsync(
+            //        buyer.Email,
+            //        "Bid Placed",
+            //        $"Hi {buyer.Name}, your bid of {bid.Amount} on auction ID {bid.AuctionId} has been successfully placed."
+            //    );
+            //}
             return $"Bid of {bid.Amount} placed successfully.";
-
-
         }
 
 
@@ -99,6 +107,5 @@ namespace Auction_System_Library_Infrastructure.Repository
             }
             return "Bid not found.";
         }
-
     }
 }

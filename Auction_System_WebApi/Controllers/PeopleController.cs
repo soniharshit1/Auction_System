@@ -28,9 +28,6 @@ namespace Auction_System_WebApi.Controllers
         private readonly IPersonRepository _personRepository = personRepository;
         private readonly IReviewRepository _reviewRepository = reviewRepository;
 
-
-
-
         // GET: api/People
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -144,53 +141,5 @@ namespace Auction_System_WebApi.Controllers
 
             return Ok(result);
         }
-        /// <summary>
-        /// Retrieves the profile and all reviews received by the authenticated user.
-        /// </summary>
-        /// <returns>A combined PersonProfileDTO object containing person details and reviews.</returns>
-        [HttpGet("Me")]
-        [Authorize]
-        public async Task<ActionResult<PersonProfileDTO>> GetMyProfileWithReviews()
-        {
-            // 1. Get UserId from the JWT token claims
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim, out int personId))
-            {
-                return Unauthorized(new { message = "Invalid or missing user identifier in token." });
-            }
-
-            // 2. Fetch Person data
-            var person = await _personRepository.FindPersonbyIdAsync(personId);
-
-            if (person == null)
-            {
-                return NotFound(new { message = $"User profile not found for ID: {personId}." });
-            }
-
-            // 3. Fetch Reviews where the authenticated user is the TargetUserId
-            // This is the key step: we fetch reviews where TargetUserId == personId
-            var receivedReviews = await _reviewRepository.GetReviewsForTargetUserAsync(personId);
-
-            // 4. Map and return a combined DTO
-            var profileDto = new PersonProfileDTO
-            {
-                Name = person.Name,
-                Email = person.Email,
-                ContactNumber = person.ContactNumber,
-                Role = person.Role, // Assuming 'person' object has the Role property
-                PersonId = personId,
-
-                // Assign the fetched reviews to the ReceivedReviews property
-                SellerReviews = receivedReviews
-
-
-            };
-
-            return Ok(profileDto);
-        }
-
-
-
     }
 }

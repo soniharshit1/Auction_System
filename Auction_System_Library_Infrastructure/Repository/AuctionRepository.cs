@@ -3,8 +3,6 @@ using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
 using Microsoft.Data.SqlClient;
-using Auction_System_Library_Infrastructure.DTOs;
-using Auction_System_Library_Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,15 +16,32 @@ namespace Auction_System_Library_Infrastructure.Repository
     public class AuctionRepository : IAuctionRepository
     {
         private readonly AuctionDbContext _context;
+        private readonly IEmailService _emailService;
+        private readonly IApprovalsRepository _approvalsRepository;
+        private readonly ITransactionsRepository _transactionsRepository; // New Dependency
+        private readonly IBidRepository _bidRepository;
 
-        public AuctionRepository(AuctionDbContext context)
+        public AuctionRepository(AuctionDbContext context, IEmailService emailService, IApprovalsRepository approvalsRepository, ITransactionsRepository transactionsRepository, IBidRepository bidRepository)
         {
             _context = context;
+            _emailService = emailService;
+            _approvalsRepository = approvalsRepository;
+            _transactionsRepository = transactionsRepository;
+            _bidRepository = bidRepository;
         }
 
         public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
         {
-            return await _context.Auctions.ToListAsync();
+            //return await _context.Auctions.ToListAsync();
+            // FIX: Use Include and ThenInclude to load related data
+            return await _context.Auctions
+                // 1. Include the Product entity
+                .Include(a => a.Product)
+                    // 2. Then, include the Category entity nested within the Product
+                    .ThenInclude(p => p.Category)
+                // 3. Optional: Filter out soft-deleted auctions (IsDeleted = false)
+                .Where(a => a.IsDeleted == false)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Auction>> GetActiveAuctionsAsync()
@@ -35,6 +50,14 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .Where(a => a.Status == true && a.EndDate > DateTime.Now && !a.IsDeleted)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Auction>> GetLiveAuctionsByProductAsync(int productId)
+        {
+            return await _context.Auctions
+                .Where(a => a.Status == true && a.EndDate > DateTime.Now && a.ProductId == productId && !a.IsDeleted)
+                .ToListAsync();
+        }
+
         public async Task<Auction?> GetAuctionByIdAsync(int id)
         {
             return await _context.Auctions
@@ -99,13 +122,27 @@ namespace Auction_System_Library_Infrastructure.Repository
                 }
             }
 
-        public async Task<string> CreateAuctionsAsync(Auction auction)
-        {
-            _context.Auctions.Add(auction);
-            await _context.SaveChangesAsync();
-            return $"Auction for product {auction.ProductId} created successfully.";
-        }
+            var imgParam = new SqlParameter("@Images", imgTable)
+            {
+                SqlDbType = SqlDbType.Structured,
 
+                TypeName = "AuctionImageType"
+            };
+
+            command.Parameters.Add(imgParam);
+            int auctionId = 0;
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var message = reader["Message"].ToString();
+                auctionId = (int)reader["AuctionId"];
+            }
+
+            await connection.CloseAsync();
+            var response = await _approvalsRepository.AddApprovalAsync(auctionId);
+            return response;
+        }
 
         public async Task<string> UpdateAuctionAsync(int id, Auction updatedAuction)
         {
@@ -116,14 +153,12 @@ namespace Auction_System_Library_Infrastructure.Repository
                 existingAuction.StartDate = updatedAuction.StartDate;
                 existingAuction.EndDate = updatedAuction.EndDate;
                 existingAuction.ProductId = updatedAuction.ProductId;
-
                 _context.Auctions.Update(existingAuction);
                 await _context.SaveChangesAsync();
                 return $"Auction {id} updated successfully.";
             }
             return "Auction not found.";
         }
-
 
         public async Task<string> DeleteAuctionAsync(int id)
         {
@@ -152,11 +187,11 @@ namespace Auction_System_Library_Infrastructure.Repository
                 .ToListAsync();
         }
 
-
-        public async Task<string> CloseAuctionAsync(int id, decimal finalBid)
+        public async Task<string> CloseAuctionAsync(int auctionId, decimal finalBid)
         {
-            var auction = await _context.Auctions.FindAsync(id);
-            if (auction != null)
+            var auction = await _context.Auctions.FirstOrDefaultAsync(a => a.AuctionId == auctionId && a.IsDeleted == false);
+
+            if (auction == null)
             {
                 return "Auction not found";
             }

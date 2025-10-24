@@ -11,6 +11,8 @@ namespace Auction_System_Library_Infrastructure.DTOs
         public int ReviewId { get; set; }
         public int UserId { get; set; }          // reviewer
         public int TargetUserId { get; set; }    // person being reviewed
+
+        public string? ReviewerName { get; set; } // reviewer name 
         public int Rating { get; set; }
         public string? Comment { get; set; }
         public DateTime? Date { get; set; }

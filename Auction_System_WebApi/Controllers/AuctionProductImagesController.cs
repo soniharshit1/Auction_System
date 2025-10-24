@@ -49,14 +49,5 @@ namespace Auction_System_WebApi.Controllers
 
             return File(image.ProductImages, contentType);
         }
-
-        [HttpPost]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> PostAuctionProductImage([FromQuery] int auctionId, [FromQuery] int productId, [FromQuery] int sellerId, TestDto imageFile)
-        {
-
-            var result = await _repository.UploadImage(auctionId, productId, sellerId, imageFile);
-            return Ok(result);
-        }
     }
 }

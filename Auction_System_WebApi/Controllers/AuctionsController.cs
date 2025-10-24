@@ -17,9 +17,16 @@ namespace Auction_System_WebApi.Controllers
     [ApiController]
     public class AuctionsController : ControllerBase
     {
-        private readonly IAuctionRepository _auctionRepository = auctionRepository;
+        private readonly IAuctionRepository _auctionRepository;
+        private readonly IApprovalsRepository _approvalRepository;
 
-        
+        public AuctionsController(IAuctionRepository auctionRepository,IApprovalsRepository approvalsRepository)
+        {
+            _auctionRepository = auctionRepository;
+            _approvalRepository = approvalsRepository;
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAllAuctions()
         {
@@ -87,7 +94,6 @@ namespace Auction_System_WebApi.Controllers
             return Ok(auctions);
         }
 
-
         [HttpPost]
         public async Task<ActionResult<string>> CreateAuction([FromForm] AuctionCreateDTO auctionDto, [FromForm] IFormFileCollection images)
         {
@@ -109,11 +115,9 @@ namespace Auction_System_WebApi.Controllers
                 imageDtos
             );
 
-            var response = await _auctionRepository.CreateAuctionsAsync(auction);
-            return Ok(response);
+            return Ok(result);
         }
 
-        
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> UpdateAuction(int id, [FromBody] AuctionUpdateDTO auctionDto)
         {
@@ -133,7 +137,6 @@ namespace Auction_System_WebApi.Controllers
             return Ok(response);
         }
 
-        
         [HttpPatch("{id}/Close")]
         public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
         {
@@ -148,7 +151,6 @@ namespace Auction_System_WebApi.Controllers
             // Return the response, which tells the admin the transaction is pending (0)
             return Ok(response);
         }
-
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteAuction(int id)

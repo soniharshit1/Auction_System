@@ -17,61 +17,221 @@ namespace Auction_System_Library_Infrastructure.Repository
     {
 
         private readonly AuctionDbContext _context;
-        public ApprovalsRepository(AuctionDbContext context)
+
+        private readonly IPersonRepository _personRepository;
+
+        public ApprovalsRepository(AuctionDbContext context, IPersonRepository personRepository)
+
         {
 
             _context = context;
+
+            _personRepository = personRepository;
+
         }
+
+        private int GetRandomAgentId()
+
+        {
+
+            var agents = _personRepository.GetAllPersonsAsync().Result
+
+                .Where(p => p.Role.ToString().ToLower() == "agent" && !p.IsDeleted)
+
+                .ToList();
+
+            if (!agents.Any())
+
+                throw new InvalidOperationException("No agents available");
+
+            var random = new Random();
+
+            int index = random.Next(agents.Count);
+
+            return agents[index].UserId;
+
+        }
+
+        private IQueryable<Approval> ActiveApprovals()
+
+        {
+
+            return _context.Approvals
+
+                .Where(approval => !approval.IsDeleted);
+
+        }
+
+        public async Task<IEnumerable<Approval>> GetAllApprovalsAsync()
+
+        {
+
+            return await ActiveApprovals().ToListAsync();
+
+        }
+
         public async Task<IEnumerable<Approval>> GetAllPendingApprovalAsync()
 
         {
-            var pendingApproval = await _context.Approvals.Where(a => a.IsDeleted == false)
-                .Where(a => a.Status == null || a.Status == false).ToListAsync();
 
-            return pendingApproval; 
+            return await ActiveApprovals()
+
+                .Where(approval =>
+
+                    approval.Status == false &&
+
+                    approval.Remarks.ToLower() == "pending")
+
+                .ToListAsync();
 
         }
-        public async Task<Approval?> AddApprovalAsync(int id)
-        {
-            var approval = await _context.Approvals.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.ApprovalId == id);
-            if (approval == null) return null;
 
-            approval.Status = true;
-            approval.ApprovalDate = DateTime.Now;
+        public async Task<IEnumerable<Approval>> GetAllApprovedApprovalsAsync()
+
+        {
+
+            return await ActiveApprovals()
+
+                .Where(approval => approval.Status == true)
+
+                .ToListAsync();
+
+        }
+
+        public async Task<IEnumerable<Approval>> GetAllRejectedApprovalsAsync()
+
+        {
+
+            return await ActiveApprovals()
+
+                .Where(approval =>
+
+                    approval.Status == false &&
+
+                    approval.Remarks.ToLower() != "pending")
+
+                .ToListAsync();
+
+        }
+
+        public async Task<Approval?> GetApprovalByAuctionIdAsync(int auctionId)
+
+        {
+
+            return await ActiveApprovals()
+
+                .FirstOrDefaultAsync(approval => approval.AuctionId == auctionId);
+
+        }
+
+        public async Task<string> AddApprovalAsync(int auctionId)
+
+        {
+
+            var auction = await _context.Auctions
+
+                .Where(a => !a.IsDeleted && a.AuctionId == auctionId)
+
+                .FirstOrDefaultAsync();
+
+            if (auction == null) return "Auction not found";
+
+            var approval = new Approval
+
+            {
+
+                AuctionId = auctionId,
+
+                ProductId = auction.ProductId,
+
+                Status = false,
+
+                ApprovalDate = DateTime.Now,
+
+                Remarks = "pending",
+
+                AgentId = GetRandomAgentId(),
+
+                IsDeleted = false
+
+            };
 
             await _context.Approvals.AddAsync(approval);
+
             await _context.SaveChangesAsync();
-            return approval;
+
+            return "Auction sent for approval";
+
         }
-        public async Task<Approval?> UpdateApprovalStatusAsync(int id, ApprovalDTO approvalDto)
+
+        public async Task<string> ApproveAuctionAsync(ApprovalDTO approvalDto)
+
         {
-            var approval = await _context.Approvals.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.ApprovalId == id);
-            if (approval == null) return null;
-            approval.Status = approvalDto.Status;
-            approval.ApprovalDate = approvalDto.ApprovalDate ?? DateTime.UtcNow;
+
+            int auctionId = approvalDto.AuctionId;
+
+            var approval = await ActiveApprovals()
+
+                .FirstOrDefaultAsync(a => a.AuctionId == auctionId);
+
+            if (approval == null)
+
+                return $"No approval record found for auction ID {auctionId}";
+
+            if (approval.Status == true)
+
+                return $"Auction ID {auctionId} is already approved";
+
+            if (!string.Equals(approval.Remarks, "pending", StringComparison.OrdinalIgnoreCase))
+
+                return $"Auction ID {auctionId} cannot be approved as it is not in pending state";
+
+            approval.Status = true;
+
             approval.Remarks = approvalDto.Remarks;
-            approval.AgentId = approvalDto.AgentId;
+
+            approval.ApprovalDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return approval;
+
+            return $"Auction ID {auctionId} approved successfully";
+
+        }
 
 
-        public async Task<Approval?> RejectApprovalAsync(int id, string remark)
+        public async Task<string> RejectApprovalAsync(int auctionId, string remark)
+
         {
-            var approval = await _context.Approvals.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p=>p.ApprovalId == id);
-            if (approval == null) return null;
+
+            var approval = await ActiveApprovals()
+
+                .FirstOrDefaultAsync(a => a.AuctionId == auctionId);
+
+            if (approval == null)
+
+                return $"No approval record found for auction ID {auctionId}";
+
+            if (approval.Status == true)
+
+                return $"Auction ID {auctionId} is already approved and cannot be rejected";
+
+            if (!string.Equals(approval.Remarks, "pending", StringComparison.OrdinalIgnoreCase))
+
+                return $"Auction ID {auctionId} cannot be rejected as it is not in pending state";
 
             approval.Status = false;
 
             approval.Remarks = remark;
-            approval.ApprovalDate= DateTime.UtcNow;
+
+            approval.ApprovalDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return approval;
 
-            
+            return $"Auction ID {auctionId} rejected successfully";
+
         }
 
     }
 
 }
+
