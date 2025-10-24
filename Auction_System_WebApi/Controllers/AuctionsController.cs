@@ -97,7 +97,7 @@ namespace Auction_System_WebApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<string>> CreateAuction([FromBody] AuctionCreateDTO auctionDto)
+        public async Task<ActionResult<string>> CreateAuction([FromForm] AuctionCreateDTO auctionDto, [FromForm] IFormFileCollection images)
         {
             var attributes = auctionDto.Attributes.Select(attr => new AddAuctionProductAttributesDTO
             {
@@ -105,22 +105,21 @@ namespace Auction_System_WebApi.Controllers
                 AttributeValue = attr.AttributeValue
             }).ToList();
 
+            var imageDtos = images.Select(file => new TestDto { File = file }).ToList();
+
             var result = await _auctionRepository.CreateAuctionWithAttributesAsync(
                 auctionDto.ProductId,
                 auctionDto.SellerId,
                 auctionDto.StartDate,
                 auctionDto.EndDate,
                 auctionDto.StartPrice,
-                attributes
+                attributes,
+                imageDtos
             );
 
-            if (result.Contains("Auction ID"))
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
+            return Ok(result);
         }
+
 
 
         [HttpPut("{id}")]
