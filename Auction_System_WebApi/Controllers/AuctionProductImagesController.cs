@@ -42,10 +42,10 @@ namespace Auction_System_WebApi.Controllers
 
             if (image == null || image.ProductImages == null)
             {
-                return NotFound();
+                return NotFound(); 
             }
 
-            string contentType = "image/jpeg";
+            string contentType = "image/jpeg"; 
 
             return File(image.ProductImages, contentType);
         }

@@ -36,28 +36,16 @@ namespace Auction_System_WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<AuctionProductAttribute>> PostAuctionProductAttribute([FromQuery]int auctionId,[FromQuery]int attributeId, [FromQuery]string attributeValue)
-        {
-            var result = await _auctionProductAttributeRepository.SaveAttributesAsync(auctionId, attributeId, attributeValue);
-            if(result == "Auction not found.")
-            {
-                return NotFound(result);
-            }
-            return Ok(result);
-        }
-
         // DELETE: api/AuctionProductAttributes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuctionProductAttribute(int id)
         {
             var result = await _auctionProductAttributeRepository.DeleteAsync(id);
-            if(result == "Attribute not found or has been deleted.")
+            if (result == "Attribute not found or has been deleted.")
             {
                 return NotFound(result);
             }
             return Ok(result);
         }
-
     }
 }

@@ -2,7 +2,7 @@
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
-
+using Auction_System_Library_Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +17,9 @@ namespace Auction_System_WebApi.Controllers
     [ApiController]
     public class AuctionsController : ControllerBase
     {
-        private readonly IAuctionRepository _auctionRepository;
+        private readonly IAuctionRepository _auctionRepository = auctionRepository;
 
-        public AuctionsController(IAuctionRepository auctionRepository)
-        {
-            _auctionRepository = auctionRepository;
-        }
-
-
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAllAuctions()
         {
@@ -94,24 +89,31 @@ namespace Auction_System_WebApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<string>> CreateAuction([FromBody] AuctionCreateDTO auctionDto)
+        public async Task<ActionResult<string>> CreateAuction([FromForm] AuctionCreateDTO auctionDto, [FromForm] IFormFileCollection images)
         {
-            var auction = new Auction()
+            var attributes = auctionDto.Attributes.Select(attr => new AddAuctionProductAttributesDTO
             {
-                ProductId = auctionDto.ProductId,
-                SellerId = auctionDto.SellerId,
-                StartPrice = auctionDto.StartPrice,
-                StartDate = auctionDto.StartDate,
-                EndDate = auctionDto.EndDate,
-                Status = true
-            };
+                AttributeId = attr.AttributeId,
+                AttributeValue = attr.AttributeValue
+            }).ToList();
+
+            var imageDtos = images.Select(file => new TestDto { File = file }).ToList();
+
+            var result = await _auctionRepository.CreateAuctionWithAttributesAsync(
+                auctionDto.ProductId,
+                auctionDto.SellerId,
+                auctionDto.StartDate,
+                auctionDto.EndDate,
+                auctionDto.StartPrice,
+                attributes,
+                imageDtos
+            );
 
             var response = await _auctionRepository.CreateAuctionsAsync(auction);
-
             return Ok(response);
         }
 
-
+        
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> UpdateAuction(int id, [FromBody] AuctionUpdateDTO auctionDto)
         {
@@ -131,22 +133,7 @@ namespace Auction_System_WebApi.Controllers
             return Ok(response);
         }
 
-
-        //[HttpPatch("{id}/Close")]
-        //public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
-        //{
-        //    var response = await _auctionRepository.CloseAuctionAsync(id, closeDto.FinalBid);
-        //    if (response == "Auction not found")
-        //    {
-        //        return NotFound(response);
-        //    }
-        //    return Ok(response);
-        //}
-
-        // Auction_System_WebApi.Controllers/AuctionsController.cs
-
-        // ... existing code ...
-
+        
         [HttpPatch("{id}/Close")]
         public async Task<ActionResult<string>> CloseAuction(int id, [FromBody] AuctionCloseDTO closeDto)
         {

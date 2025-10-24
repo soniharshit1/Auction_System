@@ -10,7 +10,7 @@ namespace Auction_System_Library_Infrastructure.Repository
     {
         private readonly AuctionDbContext _context;
 
-        public AuctionProductImagesRepository(AuctionDbContext context)
+        public AuctionProductImagesRepository(AuctionDbContext context) 
         {
             _context = context;
         }

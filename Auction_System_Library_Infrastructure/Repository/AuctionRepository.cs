@@ -2,93 +2,115 @@
 using Auction_System_Library_Database.Models;
 using Auction_System_Library_Infrastructure.DTOs;
 using Auction_System_Library_Infrastructure.Interfaces;
+using Microsoft.Data.SqlClient;
+using Auction_System_Library_Infrastructure.DTOs;
+using Auction_System_Library_Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Auction_System_Library_Infrastructure.Repository
 {
     public class AuctionRepository : IAuctionRepository
-
     {
         private readonly AuctionDbContext _context;
-        private readonly ITransactionsRepository _transactionsRepository; // New Dependency
-        private readonly IBidRepository _bidRepository;
-        private readonly IEmailService _emailService;
 
-        public AuctionRepository(AuctionDbContext context, ITransactionsRepository transactionsRepository, IBidRepository bidRepository, IEmailService emailService)
+        public AuctionRepository(AuctionDbContext context)
         {
             _context = context;
-            _emailService = emailService;
-            _transactionsRepository = transactionsRepository;
-            _bidRepository = bidRepository;
         }
 
         public async Task<IEnumerable<Auction>> GetAllAuctionsAsync()
         {
-            //return await _context.Auctions.ToListAsync();
-            // FIX: Use Include and ThenInclude to load related data
-            return await _context.Auctions
-                // 1. Include the Product entity
-                .Include(a => a.Product)
-                    // 2. Then, include the Category entity nested within the Product
-                    .ThenInclude(p => p.Category)
-                // 3. Optional: Filter out soft-deleted auctions (IsDeleted = false)
-                .Where(a => a.IsDeleted == false)
-                .ToListAsync();
+            return await _context.Auctions.ToListAsync();
         }
 
         public async Task<IEnumerable<Auction>> GetActiveAuctionsAsync()
         {
             return await _context.Auctions
-                .Where(a => a.Status == true && a.EndDate > DateTime.Now)
+                .Where(a => a.Status == true && a.EndDate > DateTime.Now && !a.IsDeleted)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<Auction>> GetLiveAuctionsByProductAsync(int productId)
-        {
-            return await _context.Auctions
-                .Where(a => a.Status == true && a.EndDate > DateTime.Now && a.ProductId == productId)
-                .ToListAsync();
-        }
-
-
-
         public async Task<Auction?> GetAuctionByIdAsync(int id)
         {
             return await _context.Auctions
                 .Include(a => a.Product)
                 .Include(a => a.Seller)
-                .FirstOrDefaultAsync(a => a.AuctionId == id);
+                .FirstOrDefaultAsync(a => a.AuctionId == id && !a.IsDeleted);
         }
+
+        public async Task<string> CreateAuctionWithAttributesAsync(
+        int productId,
+        int sellerId,
+        DateTime startDate,
+        DateTime endDate,
+        decimal startPrice,
+        List<AddAuctionProductAttributesDTO> attributes,
+        List<TestDto> images)
+        {
+            using var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = "CreateAuctionWithAttributes";
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add(new SqlParameter("@ProductId", productId));
+            command.Parameters.Add(new SqlParameter("@SellerId", sellerId));
+            command.Parameters.Add(new SqlParameter("@StartDate", startDate));
+            command.Parameters.Add(new SqlParameter("@EndDate", endDate));
+            command.Parameters.Add(new SqlParameter("@StartPrice", startPrice));
+
+            // Attributes TVP
+            var attrTable = new DataTable();
+            attrTable.Columns.Add("AttributeId", typeof(int));
+            attrTable.Columns.Add("AttributeValue", typeof(string));
+
+            foreach (var attr in attributes)
+            {
+                attrTable.Rows.Add(attr.AttributeId, attr.AttributeValue);
+            }
+
+            var attrParam = new SqlParameter("@Attributes", attrTable)
+            {
+                SqlDbType = SqlDbType.Structured,
+                TypeName = "AuctionAttributeType"
+            };
+            command.Parameters.Add(attrParam);
+
+            // Images TVP
+            var imgTable = new DataTable();
+            imgTable.Columns.Add("ProductId", typeof(int));
+            imgTable.Columns.Add("SellerId", typeof(int));
+            imgTable.Columns.Add("ProductImages", typeof(byte[]));
+
+            foreach (var img in images)
+            {
+                if (img?.File?.Length > 0)
+                {
+                    using var ms = new MemoryStream();
+                    await img.File.CopyToAsync(ms);
+                    var imageBytes = ms.ToArray();
+                    imgTable.Rows.Add(productId, sellerId, imageBytes);
+                }
+            }
 
         public async Task<string> CreateAuctionsAsync(Auction auction)
         {
             _context.Auctions.Add(auction);
             await _context.SaveChangesAsync();
-
-            //var seller = await _context.People.FindAsync(auction.SellerId);
-            //if (seller != null)
-            //{
-            //    await _emailService.SendSimpleEmailAsync(
-            //        seller.Email,
-            //        "Auction Created",
-            //        $"Hi {seller.Name}, your auction for product ID {auction.ProductId} has been successfully created."
-            //        );
-            //}
-
             return $"Auction for product {auction.ProductId} created successfully.";
-
-
         }
 
 
         public async Task<string> UpdateAuctionAsync(int id, Auction updatedAuction)
         {
             var existingAuction = await _context.Auctions.FindAsync(id);
-            if (existingAuction != null)
+            if (existingAuction != null && !existingAuction.IsDeleted)
             {
                 existingAuction.StartPrice = updatedAuction.StartPrice;
                 existingAuction.StartDate = updatedAuction.StartDate;
@@ -103,12 +125,10 @@ namespace Auction_System_Library_Infrastructure.Repository
         }
 
 
-
-
         public async Task<string> DeleteAuctionAsync(int id)
         {
             var auction = await _context.Auctions.FindAsync(id);
-            if (auction != null)
+            if (auction != null && !auction.IsDeleted)
             {
                 auction.IsDeleted = true;
                 _context.Auctions.Update(auction);
@@ -118,44 +138,25 @@ namespace Auction_System_Library_Infrastructure.Repository
             return "Auction not found.";
         }
 
-
-
         public async Task<IEnumerable<Auction>> GetAuctionsBySellerAsync(int sellerId)
         {
             return await _context.Auctions
-                .Where(a => a.SellerId == sellerId)
+                .Where(a => a.SellerId == sellerId && !a.IsDeleted)
                 .ToListAsync();
         }
-
 
         public async Task<IEnumerable<Auction>> GetAuctionsByProductAsync(int productId)
         {
             return await _context.Auctions
-                .Where(a => a.ProductId == productId)
+                .Where(a => a.ProductId == productId && !a.IsDeleted)
                 .ToListAsync();
         }
 
 
-        //public async Task<string> CloseAuctionAsync(int id, decimal finalBid)
-        //{
-        //    var auction = await _context.Auctions.FindAsync(id);
-        //    if (auction != null)
-        //    {
-        //        auction.Status = false;
-        //        auction.FinalBid = finalBid;
-        //        await _context.SaveChangesAsync();
-        //        return $"Auction {id} closed with final bid {finalBid}.";
-        //    }
-        //    return "Auction not found.";
-        //}  
-
-        // Auction_System_Library_Infrastructure.Repository/AuctionRepository.cs
-
-        public async Task<string> CloseAuctionAsync(int auctionId, decimal finalBid)
+        public async Task<string> CloseAuctionAsync(int id, decimal finalBid)
         {
-            var auction = await _context.Auctions.FirstOrDefaultAsync(a => a.AuctionId == auctionId && a.IsDeleted == false);
-
-            if (auction == null)
+            var auction = await _context.Auctions.FindAsync(id);
+            if (auction != null)
             {
                 return "Auction not found";
             }

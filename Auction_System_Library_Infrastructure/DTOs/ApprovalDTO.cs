@@ -16,6 +16,8 @@ namespace Auction_System_Library_Infrastructure.DTOs
 
     {
 
+        public int ProductId { get; set; }
+
         public DateTime? ApprovalDate { get; set; }
 
         public bool? Status { get; set; }
@@ -25,7 +27,6 @@ namespace Auction_System_Library_Infrastructure.DTOs
         public int AgentId { get; set; }
 
         public int AuctionId { get; set; }
-
     }
 
 }

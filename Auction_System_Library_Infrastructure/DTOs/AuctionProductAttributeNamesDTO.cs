@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Auction_System_Library_Infrastructure.DTOs
 {
-    public class AddAuctionProductAttributesDTO
+    public class AuctionProductAttributeNamesDTO
     {
         public int AttributeId { get; set; }
-        public string AttributeValue { get; set; } = null!;
+        public string AttributeName { get; set; } = null!;
     }
 }

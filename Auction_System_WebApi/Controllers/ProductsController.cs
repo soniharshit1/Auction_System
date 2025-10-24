@@ -17,6 +17,14 @@ namespace Auction_System_WebApi.Controllers
         {
             return Ok(await _productRepository.GetProductsAsync());
         }
+        // GET: api/Products/ByCategory/5
+        [HttpGet("ByCategory/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCategory(int categoryId)
+        {
+            var products = await _productRepository.GetProductsByCategoryAsync(categoryId);
+            return Ok(products);
+        }
+
 
         // GET: api/Products/id
         [HttpGet("{id}")]
@@ -25,7 +33,7 @@ namespace Auction_System_WebApi.Controllers
             if (id == null) return BadRequest("Please enter a valid id");
             Product? product = await _productRepository.GetProductByIdAsync(id);
 
-            return product;
+            return Ok(product);
         }
 
         // PUT: api/Products/id

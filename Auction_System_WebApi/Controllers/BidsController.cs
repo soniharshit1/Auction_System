@@ -14,9 +14,14 @@ namespace Auction_System_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BidsController(IBidRepository bidRepository) : ControllerBase
+    public class BidsController : ControllerBase
     {
-        private readonly IBidRepository _bidRepository = bidRepository;
+        private readonly IBidRepository _bidRepository;
+
+        public BidsController(IBidRepository bidRepository)
+        {
+            _bidRepository = bidRepository;
+        }
 
         [HttpPost]
         public async Task<IActionResult> PlaceBid([FromBody] BidCreateDTO bidDto)

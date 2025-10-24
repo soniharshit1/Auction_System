@@ -25,6 +25,6 @@ namespace Auction_System_Library_Infrastructure.DTOs
         // The list of reviews where this person is the seller.
         public IEnumerable<ReviewDTO> SellerReviews { get; set; } = new List<ReviewDTO>();
 
-  
+
     }
 }
